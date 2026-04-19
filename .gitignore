@@ -1,0 +1,21 @@
+# .gitignore PathoQuest
+# Fichiers et dossiers à exclure du dépôt GitHub
+
+# Systèmes
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporaires
+*.tmp
+*.bak
+*.log
+
+# Scripts locaux
+COPIER_IMAGES.bat

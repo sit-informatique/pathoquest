@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PathoQuest — De la pièce opératoire au diagnostic</title>
+  <meta name="description" content="Serious Game pédagogique en Anatomie Pathologique. Gérez une pièce de lobectomie pulmonaire du pré-analytique au diagnostic microscopique.">
+  <meta name="keywords" content="anatomie pathologique, histologie, macroscopie, microscopie, lobectomie, pédagogie médicale, serious game">
+  <meta name="author" content="PathoQuest — Pédagogie en Anatomie Pathologique">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Particle canvas (ambient only) -->
+  <canvas id="particles-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.2"></canvas>
+
+  <!-- ── Medical Characters Scene ───────────────────────── -->
+  <div id="medical-scene" aria-hidden="true">
+
+    <!-- DOCTOR (left) -->
+    <div class="mchar mchar-doctor" id="mc-doctor" title="Médecin">
+      <svg viewBox="0 0 120 220" xmlns="http://www.w3.org/2000/svg" class="mchar-svg">
+        <!-- Lab coat body -->
+        <rect x="30" y="90" width="60" height="90" rx="6" fill="#e8f4ff" stroke="#b8d4f0" stroke-width="1.5"/>
+        <!-- Coat lapels -->
+        <polygon points="50,90 30,120 45,90" fill="#cce0f5"/>
+        <polygon points="70,90 90,120 75,90" fill="#cce0f5"/>
+        <!-- Shirt underneath -->
+        <rect x="45" y="90" width="30" height="30" fill="#2979ff" opacity="0.8"/>
+        <!-- Pocket -->
+        <rect x="70" y="108" width="14" height="16" rx="2" fill="white" stroke="#b8d4f0" stroke-width="1"/>
+        <!-- Pen in pocket -->
+        <line x1="75" y1="108" x2="74" y2="100" stroke="#00e5ff" stroke-width="2" stroke-linecap="round"/>
+        <!-- Arms -->
+        <rect x="10" y="92" width="22" height="60" rx="10" fill="#e8f4ff" stroke="#b8d4f0" stroke-width="1.5"/>
+        <rect x="88" y="92" width="22" height="60" rx="10" fill="#e8f4ff" stroke="#b8d4f0" stroke-width="1.5"/>
+        <!-- Hands -->
+        <circle cx="21" cy="156" r="10" fill="#f5c9a0"/>
+        <circle cx="99" cy="156" r="10" fill="#f5c9a0"/>
+        <!-- Left hand holds clipboard -->
+        <rect x="4" y="150" width="28" height="36" rx="3" fill="white" stroke="#aaa" stroke-width="1.5"/>
+        <rect x="14" y="146" width="8" height="6" rx="2" fill="#888"/>
+        <line x1="9" y1="160" x2="27" y2="160" stroke="#ccc" stroke-width="1.5"/>
+        <line x1="9" y1="166" x2="27" y2="166" stroke="#ccc" stroke-width="1.5"/>
+        <line x1="9" y1="172" x2="20" y2="172" stroke="#ccc" stroke-width="1.5"/>
+        <!-- Right hand stethoscope -->
+        <path d="M92 148 Q80 145 78 130 Q76 115 86 112" fill="none" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="86" cy="109" r="6" fill="none" stroke="#555" stroke-width="2.5"/>
+        <circle cx="86" cy="109" r="2.5" fill="#00e5ff"/>
+        <!-- Legs -->
+        <rect x="35" y="178" width="22" height="42" rx="6" fill="#1a237e"/>
+        <rect x="63" y="178" width="22" height="42" rx="6" fill="#1a237e"/>
+        <!-- Shoes -->
+        <ellipse cx="46" cy="220" rx="15" ry="7" fill="#111"/>
+        <ellipse cx="74" cy="220" rx="15" ry="7" fill="#111"/>
+        <!-- Neck -->
+        <rect x="50" y="72" width="20" height="20" rx="4" fill="#f5c9a0"/>
+        <!-- Head -->
+        <ellipse cx="60" cy="50" rx="28" ry="32" fill="#f5c9a0"/>
+        <!-- Hair -->
+        <ellipse cx="60" cy="24" rx="28" ry="16" fill="#4a3728"/>
+        <rect x="32" y="24" width="56" height="12" rx="4" fill="#4a3728"/>
+        <!-- Eyes -->
+        <ellipse cx="48" cy="48" rx="5" ry="6" fill="white"/>
+        <ellipse cx="72" cy="48" rx="5" ry="6" fill="white"/>
+        <circle cx="49" cy="50" r="3" fill="#2c1810"/>
+        <circle cx="73" cy="50" r="3" fill="#2c1810"/>
+        <circle cx="50" cy="48" r="1" fill="white"/>
+        <circle cx="74" cy="48" r="1" fill="white"/>
+        <!-- Eyebrows -->
+        <path d="M43 40 Q48 37 53 40" fill="none" stroke="#4a3728" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M67 40 Q72 37 77 40" fill="none" stroke="#4a3728" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Smile -->
+        <path d="M48 66 Q60 76 72 66" fill="none" stroke="#c07850" stroke-width="2" stroke-linecap="round"/>
+        <!-- Nose -->
+        <path d="M57 55 Q60 62 63 55" fill="none" stroke="#d4a882" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Glow cross on coat -->
+        <line x1="57" y1="97" x2="57" y2="107" stroke="#00e5ff" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="52" y1="102" x2="62" y2="102" stroke="#00e5ff" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <div class="mchar-label">Médecin</div>
+    </div>
+
+    <!-- SURGEON (right) -->
+    <div class="mchar mchar-surgeon" id="mc-surgeon" title="Chirurgien">
+      <svg viewBox="0 0 120 220" xmlns="http://www.w3.org/2000/svg" class="mchar-svg">
+        <!-- Scrubs body -->
+        <rect x="28" y="88" width="64" height="96" rx="6" fill="#1de9b6" opacity="0.85"/>
+        <!-- Scrubs V-neck -->
+        <polygon points="60,88 44,108 76,108" fill="#00bfa5"/>
+        <!-- Arms -->
+        <rect x="8" y="90" width="22" height="65" rx="10" fill="#1de9b6" opacity="0.85"/>
+        <rect x="90" y="90" width="22" height="65" rx="10" fill="#1de9b6" opacity="0.85"/>
+        <!-- Hands -->
+        <circle cx="19" cy="158" r="10" fill="#f5c9a0"/>
+        <circle cx="101" cy="158" r="10" fill="#f5c9a0"/>
+        <!-- Left hand: gloves -->
+        <circle cx="19" cy="158" r="10" fill="#a5d6a7" opacity="0.8"/>
+        <circle cx="101" cy="158" r="10" fill="#a5d6a7" opacity="0.8"/>
+        <!-- Right hand: scalpel -->
+        <line x1="101" y1="158" x2="118" y2="135" stroke="#bbb" stroke-width="3" stroke-linecap="round"/>
+        <path d="M116 133 L122 130 L118 137 Z" fill="#888"/>
+        <!-- Left hand: surgical scissors -->
+        <line x1="19" y1="158" x2="4" y2="138" stroke="#bbb" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="19" y1="158" x2="10" y2="135" stroke="#bbb" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Legs -->
+        <rect x="32" y="182" width="24" height="38" rx="6" fill="#00897b"/>
+        <rect x="64" y="182" width="24" height="38" rx="6" fill="#00897b"/>
+        <!-- Shoes (clogs) -->
+        <ellipse cx="44" cy="220" rx="16" ry="7" fill="#4e342e"/>
+        <ellipse cx="76" cy="220" rx="16" ry="7" fill="#4e342e"/>
+        <!-- Neck -->
+        <rect x="50" y="72" width="20" height="18" rx="4" fill="#f5c9a0"/>
+        <!-- Head -->
+        <ellipse cx="60" cy="50" rx="27" ry="30" fill="#f5c9a0"/>
+        <!-- Surgical cap -->
+        <ellipse cx="60" cy="26" rx="30" ry="14" fill="#1de9b6" opacity="0.9"/>
+        <rect x="30" y="26" width="60" height="10" rx="2" fill="#1de9b6" opacity="0.9"/>
+        <!-- Cap tie at back -->
+        <path d="M88 28 Q96 32 92 40" fill="none" stroke="#1de9b6" stroke-width="3" stroke-linecap="round"/>
+        <!-- Surgical mask -->
+        <rect x="36" y="54" width="48" height="28" rx="8" fill="#b2dfdb" stroke="#80cbc4" stroke-width="1.5"/>
+        <!-- Mask straps -->
+        <line x1="36" y1="58" x2="28" y2="52" stroke="#80cbc4" stroke-width="2"/>
+        <line x1="84" y1="58" x2="92" y2="52" stroke="#80cbc4" stroke-width="2"/>
+        <!-- Eyes above mask -->
+        <ellipse cx="48" cy="46" rx="5" ry="5.5" fill="white"/>
+        <ellipse cx="72" cy="46" rx="5" ry="5.5" fill="white"/>
+        <circle cx="49" cy="47" r="3" fill="#1a0a00"/>
+        <circle cx="73" cy="47" r="3" fill="#1a0a00"/>
+        <circle cx="50" cy="45" r="1" fill="white"/>
+        <circle cx="74" cy="45" r="1" fill="white"/>
+        <!-- Eyebrows -->
+        <path d="M43 38 Q48 35 53 38" fill="none" stroke="#4a3728" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M67 38 Q72 35 77 38" fill="none" stroke="#4a3728" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Scrubs pocket text CHIRURGIE -->
+        <rect x="66" y="100" width="20" height="14" rx="2" fill="#00897b"/>
+        <text x="76" y="110" text-anchor="middle" font-size="4.5" fill="white" font-family="sans-serif">CHR</text>
+      </svg>
+      <div class="mchar-label">Chirurgien</div>
+    </div>
+
+    <!-- NURSE (left-center) -->
+    <div class="mchar mchar-nurse" id="mc-nurse" title="Infirmière">
+      <svg viewBox="0 0 120 220" xmlns="http://www.w3.org/2000/svg" class="mchar-svg">
+        <!-- Uniform body white -->
+        <rect x="28" y="88" width="64" height="96" rx="6" fill="#f8f8ff" stroke="#dde" stroke-width="1.5"/>
+        <!-- Uniform collar / V -->
+        <polygon points="60,88 44,110 76,110" fill="#e8e8f8"/>
+        <!-- Blue trim top -->
+        <rect x="28" y="88" width="64" height="14" rx="6" fill="#5c6bc0"/>
+        <!-- Arms -->
+        <rect x="8" y="90" width="22" height="65" rx="10" fill="#f8f8ff" stroke="#dde" stroke-width="1.5"/>
+        <rect x="90" y="90" width="22" height="65" rx="10" fill="#f8f8ff" stroke="#dde" stroke-width="1.5"/>
+        <!-- Hands -->
+        <circle cx="19" cy="158" r="10" fill="#fad7a0"/>
+        <circle cx="101" cy="158" r="10" fill="#fad7a0"/>
+        <!-- Left: clipboard -->
+        <rect x="2" y="148" width="28" height="36" rx="3" fill="white" stroke="#aaa" stroke-width="1.5"/>
+        <rect x="12" y="144" width="8" height="6" rx="2" fill="#5c6bc0"/>
+        <line x1="7" y1="158" x2="25" y2="158" stroke="#ccc" stroke-width="1.5"/>
+        <line x1="7" y1="164" x2="25" y2="164" stroke="#ccc" stroke-width="1.5"/>
+        <line x1="7" y1="170" x2="18" y2="170" stroke="#ccc" stroke-width="1.5"/>
+        <!-- Right: IV bag -->
+        <ellipse cx="104" cy="142" rx="9" ry="12" fill="#b3e5fc" stroke="#4fc3f7" stroke-width="1.5"/>
+        <line x1="104" y1="154" x2="104" y2="170" stroke="#4fc3f7" stroke-width="2"/>
+        <rect x="100" y="168" width="8" height="4" rx="1" fill="#4fc3f7"/>
+        <!-- Legs -->
+        <rect x="32" y="182" width="24" height="38" rx="6" fill="#3949ab"/>
+        <rect x="64" y="182" width="24" height="38" rx="6" fill="#3949ab"/>
+        <!-- Shoes -->
+        <ellipse cx="44" cy="220" rx="15" ry="7" fill="#fff" stroke="#ddd" stroke-width="1.5"/>
+        <ellipse cx="76" cy="220" rx="15" ry="7" fill="#fff" stroke="#ddd" stroke-width="1.5"/>
+        <!-- Neck -->
+        <rect x="50" y="72" width="20" height="18" rx="4" fill="#fad7a0"/>
+        <!-- Head — female nurse -->
+        <ellipse cx="60" cy="48" rx="26" ry="30" fill="#fad7a0"/>
+        <!-- Hair — dark bun -->
+        <ellipse cx="60" cy="24" rx="26" ry="15" fill="#3e2723"/>
+        <rect x="34" y="24" width="52" height="10" rx="3" fill="#3e2723"/>
+        <!-- Nurse cap -->
+        <rect x="34" y="18" width="52" height="12" rx="3" fill="white" stroke="#dde" stroke-width="1.5"/>
+        <rect x="50" y="14" width="20" height="8" rx="2" fill="white" stroke="#dde" stroke-width="1"/>
+        <!-- Red cross on cap -->
+        <line x1="60" y1="15" x2="60" y2="23" stroke="#e53935" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="56" y1="19" x2="64" y2="19" stroke="#e53935" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Eyes -->
+        <ellipse cx="47" cy="48" rx="5" ry="5.5" fill="white"/>
+        <ellipse cx="73" cy="48" rx="5" ry="5.5" fill="white"/>
+        <circle cx="48" cy="49" r="3" fill="#1a0a00"/>
+        <circle cx="74" cy="49" r="3" fill="#1a0a00"/>
+        <circle cx="49" cy="47" r="1" fill="white"/>
+        <circle cx="75" cy="47" r="1" fill="white"/>
+        <!-- Lashes top -->
+        <path d="M43 42 Q47 39 51 42" fill="none" stroke="#3e2723" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M68 42 Q72 39 77 42" fill="none" stroke="#3e2723" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Smile -->
+        <path d="M50 64 Q60 74 70 64" fill="none" stroke="#c07850" stroke-width="2" stroke-linecap="round"/>
+        <!-- Blush -->
+        <ellipse cx="42" cy="60" rx="6" ry="4" fill="#ffb3b3" opacity="0.5"/>
+        <ellipse cx="78" cy="60" rx="6" ry="4" fill="#ffb3b3" opacity="0.5"/>
+        <!-- Nose -->
+        <path d="M57 56 Q60 62 63 56" fill="none" stroke="#d4a882" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div class="mchar-label">Infirmière</div>
+    </div>
+
+    <!-- PATHOLOGIST (right-center) -->
+    <div class="mchar mchar-pathologist" id="mc-pathologist" title="Pathologiste">
+      <svg viewBox="0 0 120 220" xmlns="http://www.w3.org/2000/svg" class="mchar-svg">
+        <!-- Lab coat -->
+        <rect x="28" y="88" width="64" height="96" rx="6" fill="#fff" stroke="#ddd" stroke-width="1.5"/>
+        <!-- Coat lapels purple -->
+        <polygon points="52,88 28,120 44,88" fill="#e8eaf6"/>
+        <polygon points="68,88 92,120 76,88" fill="#e8eaf6"/>
+        <!-- Purple shirt -->
+        <rect x="44" y="88" width="32" height="32" fill="#7c4dff" opacity="0.9"/>
+        <!-- Pocket with pen -->
+        <rect x="68" y="106" width="16" height="18" rx="2" fill="white" stroke="#ddd" stroke-width="1"/>
+        <line x1="73" y1="106" x2="72" y2="96" stroke="#7c4dff" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="78" y1="106" x2="77" y2="96" stroke="#aa00ff" stroke-width="2" stroke-linecap="round"/>
+        <!-- Arms -->
+        <rect x="8" y="90" width="22" height="65" rx="10" fill="#fff" stroke="#ddd" stroke-width="1.5"/>
+        <rect x="90" y="90" width="22" height="65" rx="10" fill="#fff" stroke="#ddd" stroke-width="1.5"/>
+        <!-- Hands -->
+        <circle cx="19" cy="158" r="10" fill="#f5c9a0"/>
+        <circle cx="101" cy="158" r="10" fill="#f5c9a0"/>
+        <!-- Left hand: test tube -->
+        <rect x="10" y="138" width="9" height="26" rx="4.5" fill="#e1f5fe" stroke="#4fc3f7" stroke-width="1.5"/>
+        <rect x="10" y="138" width="9" height="10" rx="0" fill="#7c4dff" opacity="0.6"/>
+        <!-- Right hand: microscope slide -->
+        <rect x="92" y="148" width="24" height="10" rx="2" fill="#e8eaf6" stroke="#9c27b0" stroke-width="1.5"/>
+        <!-- Legs -->
+        <rect x="32" y="182" width="24" height="38" rx="6" fill="#4a148c"/>
+        <rect x="64" y="182" width="24" height="38" rx="6" fill="#4a148c"/>
+        <!-- Shoes -->
+        <ellipse cx="44" cy="220" rx="15" ry="7" fill="#212121"/>
+        <ellipse cx="76" cy="220" rx="15" ry="7" fill="#212121"/>
+        <!-- Neck -->
+        <rect x="50" y="72" width="20" height="18" rx="4" fill="#f5c9a0"/>
+        <!-- Head -->
+        <ellipse cx="60" cy="48" rx="27" ry="31" fill="#f5c9a0"/>
+        <!-- Hair -->
+        <ellipse cx="60" cy="22" rx="28" ry="16" fill="#212121"/>
+        <rect x="32" y="22" width="56" height="12" rx="3" fill="#212121"/>
+        <!-- Glasses -->
+        <circle cx="47" cy="46" r="9" fill="none" stroke="#333" stroke-width="2"/>
+        <circle cx="73" cy="46" r="9" fill="none" stroke="#333" stroke-width="2"/>
+        <line x1="56" y1="46" x2="64" y2="46" stroke="#333" stroke-width="2"/>
+        <line x1="33" y1="43" x2="38" y2="44" stroke="#333" stroke-width="2"/>
+        <line x1="82" y1="44" x2="87" y2="43" stroke="#333" stroke-width="2"/>
+        <!-- Eyes through glasses -->
+        <circle cx="47" cy="47" r="4" fill="#2c1810"/>
+        <circle cx="73" cy="47" r="4" fill="#2c1810"/>
+        <circle cx="48" cy="45" r="1.5" fill="white"/>
+        <circle cx="74" cy="45" r="1.5" fill="white"/>
+        <!-- Eyebrows -->
+        <path d="M39 34 Q47 30 55 34" fill="none" stroke="#212121" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M65 34 Q73 30 81 34" fill="none" stroke="#212121" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Smile subtle -->
+        <path d="M50 64 Q60 72 70 64" fill="none" stroke="#c07850" stroke-width="1.8" stroke-linecap="round"/>
+        <!-- Nose -->
+        <path d="M57 55 Q60 61 63 55" fill="none" stroke="#d4a882" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div class="mchar-label">Pathologiste</div>
+    </div>
+
+  </div>
+
+  <style>
+  /* ═══════════════════════════════════════════════
+     MEDICAL SCENE — Characters
+  ══════════════════════════════════════════════ */
+  #medical-scene {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .mchar {
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: auto;
+    cursor: pointer;
+    transform-origin: bottom center;
+    transition: filter 0.3s ease;
+  }
+
+  .mchar-svg {
+    display: block;
+    filter: drop-shadow(0 0 18px rgba(0,229,255,0.25));
+    transition: transform 0.35s cubic-bezier(.34,1.6,.64,1), filter 0.3s ease;
+    transform-origin: bottom center;
+  }
+
+  /* Label tooltip on hover */
+  .mchar-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(0,229,255,0.9);
+    background: rgba(3,7,30,0.75);
+    border: 1px solid rgba(0,229,255,0.3);
+    border-radius: 20px;
+    padding: 3px 12px;
+    margin-top: -6px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .mchar:hover .mchar-label {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Hover: pop up and glow */
+  .mchar:hover .mchar-svg {
+    transform: scale(1.12) translateY(-10px);
+    filter: drop-shadow(0 0 30px rgba(0,229,255,0.7)) drop-shadow(0 0 60px rgba(41,121,255,0.4));
+  }
+
+  /* ── Doctor — bottom-left, slides in ─── */
+  .mchar-doctor {
+    left: -160px;
+    animation: docWalkIn 1.6s 0.3s cubic-bezier(.22,1,.36,1) forwards,
+               charBreathe 4s 2s ease-in-out infinite;
+  }
+  .mchar-doctor .mchar-svg { width: 130px; }
+
+  @keyframes docWalkIn {
+    from { left: -160px; opacity: 0; }
+    to   { left: 18px;   opacity: 1; }
+  }
+
+  /* ── Surgeon — bottom-right, slides in ─── */
+  .mchar-surgeon {
+    right: -160px;
+    animation: surgWalkIn 1.8s 0.6s cubic-bezier(.22,1,.36,1) forwards,
+               charBreathe 4.5s 2.4s ease-in-out infinite;
+  }
+  .mchar-surgeon .mchar-svg { width: 125px; }
+
+  @keyframes surgWalkIn {
+    from { right: -160px; opacity: 0; }
+    to   { right: 24px;   opacity: 1; }
+  }
+
+  /* ── Nurse — left, behind doctor ─────── */
+  .mchar-nurse {
+    left: -160px;
+    animation: nurseWalkIn 2s 1s cubic-bezier(.22,1,.36,1) forwards,
+               charBreathe 5s 3s ease-in-out infinite;
+    opacity: 0.82;
+  }
+  .mchar-nurse .mchar-svg { width: 108px; }
+
+  @keyframes nurseWalkIn {
+    from { left: -160px; opacity: 0; }
+    to   { left: 130px;  opacity: 0.82; }
+  }
+
+  /* ── Pathologist — right, behind surgeon ── */
+  .mchar-pathologist {
+    right: -160px;
+    animation: pathoWalkIn 2.2s 1.4s cubic-bezier(.22,1,.36,1) forwards,
+               charBreathe 3.8s 3.5s ease-in-out infinite;
+    opacity: 0.78;
+  }
+  .mchar-pathologist .mchar-svg { width: 105px; }
+
+  @keyframes pathoWalkIn {
+    from { right: -160px; opacity: 0; }
+    to   { right: 130px;  opacity: 0.78; }
+  }
+
+  /* ── Shared breathing idle animation ─── */
+  @keyframes charBreathe {
+    0%,100% { transform: scaleY(1)    translateY(0);  }
+    50%      { transform: scaleY(1.012) translateY(-3px); }
+  }
+
+  /* Responsive: hide secondary chars on small screens */
+  @media (max-width: 900px) {
+    .mchar-nurse, .mchar-pathologist { display: none; }
+    .mchar-doctor .mchar-svg { width: 100px; }
+    .mchar-surgeon .mchar-svg { width: 100px; }
+  }
+  @media (max-width: 600px) {
+    #medical-scene { display: none; }
+  }
+  </style>
+
+
+  <!-- Toasts & Feedback -->
+  <div id="feedback-container"></div>
+
+  <!-- HUD Control Bar -->
+  <div id="hud"></div>
+
+  <!-- Alerte chirurgien -->
+  <div id="surgeon-alert">
+    <div class="sa-icon">🚑</div>
+    <div class="sa-content">
+      <div class="sa-label">⚡ Message urgent du chirurgien</div>
+      <div class="sa-message" id="surgeon-message">Résultat en attente !</div>
+    </div>
+  </div>
+
+  <!-- Toasts feedback -->
+  <div id="feedback-container"></div>
+
+  <!-- Conteneur principal -->
+  <div id="game-container">
+
+    <!-- ── ÉCRAN ACCUEIL ──────────────────────────────────────── -->
+    <div id="screen-home" class="screen active">
+      <div id="screen-home-inner" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 64px);padding:60px 24px;text-align:center">
+
+        <div class="home-badge">🎓 Serious Game · Anatomie Pathologique</div>
+
+        <h1 class="home-title">
+          De la pièce opératoire<br>
+          <span class="gradient">au diagnostic</span>
+        </h1>
+
+        <p class="home-subtitle">
+          Prenez en charge une pièce de <strong>lobectomie pulmonaire</strong> du laboratoire de réception 
+          jusqu'au compte rendu final. Chaque erreur a des conséquences médicales réelles.
+        </p>
+
+        <!-- Cards des niveaux -->
+        <div class="home-cards">
+          <div class="home-card">
+            <div class="home-card-icon">🧫</div>
+            <div class="home-card-title">Niveau 1</div>
+            <div class="home-card-desc">Réception & conformité</div>
+          </div>
+          <div class="home-card">
+            <div class="home-card-icon">🔬</div>
+            <div class="home-card-title">Niveau 2</div>
+            <div class="home-card-desc">Examen macroscopique</div>
+          </div>
+          <div class="home-card">
+            <div class="home-card-icon">⚗️</div>
+            <div class="home-card-title">Niveau 3</div>
+            <div class="home-card-desc">Traitement technique</div>
+          </div>
+          <div class="home-card">
+            <div class="home-card-icon">🔭</div>
+            <div class="home-card-title">Niveau 4</div>
+            <div class="home-card-desc">Analyse microscopique</div>
+          </div>
+          <div class="home-card">
+            <div class="home-card-icon">📋</div>
+            <div class="home-card-title">Niveau 5</div>
+            <div class="home-card-desc">Compte rendu final</div>
+          </div>
+        </div>
+
+        <!-- Meta infos -->
+        <div class="home-meta">
+          <div class="home-meta-item"><span>⏱️</span> ~30–45 min</div>
+          <div class="home-meta-item"><span>🏆</span> 900 pts max</div>
+          <div class="home-meta-item"><span>📚</span> IASLC 9th ed. 2024</div>
+          <div class="home-meta-item"><span>🫁</span> Lobectomie pulmonaire</div>
+        </div>
+
+        <button class="btn-start" id="btn-start">
+          Commencer le scénario →
+        </button>
+
+        <p style="margin-top:20px;font-size:0.78rem;color:var(--text-muted)">
+          Le chronomètre démarre à l'appui sur le bouton · Erreurs critiques pénalisées
+        </p>
+      </div>
+    </div>
+
+    <!-- ── NIVEAU 1 : Réception ───────────────────────────────── -->
+    <div id="screen-level1" class="screen">
+      <div class="level-screen">
+        <div class="level-header">
+          <div class="level-badge">🧫</div>
+          <div class="level-info">
+            <div class="level-tag">Niveau 1 · Salle de réception</div>
+            <h2 class="level-title">Réception du Prélèvement</h2>
+            <p class="level-desc">Une pièce de lobectomie pulmonaire arrive au laboratoire. Vérifiez sa conformité complète avant de l'accepter ou de la refuser.</p>
+          </div>
+          <div style="font-size:0.85rem;text-align:right;min-width:120px">
+            <div style="color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em">Score disponible</div>
+            <div style="color:var(--accent-cyan);font-weight:700;font-family:var(--font-mono);font-size:1.2rem">150 pts</div>
+          </div>
+        </div>
+        <div id="level1-content"></div>
+      </div>
+    </div>
+
+    <!-- ── NIVEAU 2 : Macroscopie ─────────────────────────────── -->
+    <div id="screen-level2" class="screen">
+      <div class="level-screen">
+        <div class="level-header">
+          <div class="level-badge">🔬</div>
+          <div class="level-info">
+            <div class="level-tag">Niveau 2 · Salle de macroscopie</div>
+            <h2 class="level-title">Examen Macroscopique</h2>
+            <p class="level-desc">Examinez la pièce de lobectomie. Cliquez sur les zones anatomiques pour effectuer vos prélèvements.</p>
+          </div>
+          <div style="font-size:0.85rem;text-align:right;min-width:120px">
+            <div style="color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em">Score disponible</div>
+            <div style="color:var(--accent-cyan);font-weight:700;font-family:var(--font-mono);font-size:1.2rem">200 pts</div>
+          </div>
+        </div>
+        <div id="level2-content"></div>
+      </div>
+    </div>
+
+    <!-- ── NIVEAU 3 : Technique ───────────────────────────────── -->
+    <div id="screen-level3" class="screen">
+      <div class="level-screen">
+        <div class="level-header">
+          <div class="level-badge">⚗️</div>
+          <div class="level-info">
+            <div class="level-tag">Niveau 3 · Laboratoire technique</div>
+            <h2 class="level-title">Traitement Technique</h2>
+            <p class="level-desc">Remettez les étapes du traitement histologique dans le bon ordre. Glissez et déposez les cartes, ou cliquez pour les déplacer.</p>
+          </div>
+          <div style="font-size:0.85rem;text-align:right;min-width:120px">
+            <div style="color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em">Score disponible</div>
+            <div style="color:var(--accent-cyan);font-weight:700;font-family:var(--font-mono);font-size:1.2rem">150 pts</div>
+          </div>
+        </div>
+        <div id="level3-content"></div>
+      </div>
+    </div>
+
+    <!-- ── NIVEAU 4 : Microscopie ─────────────────────────────── -->
+    <div id="screen-level4" class="screen">
+      <div class="level-screen">
+        <div class="level-header">
+          <div class="level-badge">🔭</div>
+          <div class="level-info">
+            <div class="level-tag">Niveau 4 · Salle de lecture</div>
+            <h2 class="level-title">Analyse Microscopique</h2>
+            <p class="level-desc">Observez les lames histologiques et posez le diagnostic pour chaque image. Cliquez sur une lame pour l'examiner en détail.</p>
+          </div>
+          <div style="font-size:0.85rem;text-align:right;min-width:120px">
+            <div style="color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em">Score disponible</div>
+            <div style="color:var(--accent-cyan);font-weight:700;font-family:var(--font-mono);font-size:1.2rem">250 pts</div>
+          </div>
+        </div>
+        <div id="level4-content"></div>
+      </div>
+    </div>
+
+    <!-- ── NIVEAU 5 : Compte rendu ────────────────────────────── -->
+    <div id="screen-level5" class="screen">
+      <div class="level-screen">
+        <div class="level-header">
+          <div class="level-badge">📋</div>
+          <div class="level-info">
+            <div class="level-tag">Niveau 5 · Validation finale</div>
+            <h2 class="level-title">Compte Rendu Anatomo-Pathologique</h2>
+            <p class="level-desc">Rédigez le compte rendu structuré complet et établissez la classification pTNM définitive.</p>
+          </div>
+          <div style="font-size:0.85rem;text-align:right;min-width:120px">
+            <div style="color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em">Score disponible</div>
+            <div style="color:var(--accent-cyan);font-weight:700;font-family:var(--font-mono);font-size:1.2rem">150 pts</div>
+          </div>
+        </div>
+        <div id="level5-content"></div>
+      </div>
+    </div>
+
+    <!-- ── RÉSULTATS FINAUX ───────────────────────────────────── -->
+    <div id="screen-results" class="screen">
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 64px);padding:60px 24px;text-align:center;width:100%">
+
+        <div class="result-trophy" id="result-trophy">🏆</div>
+        <h2 class="result-title" id="result-mention">Excellent !</h2>
+        <p class="result-subtitle">Scénario complété · PathoQuest · Lobectomie pulmonaire droite</p>
+
+        <div class="result-score-big" id="result-score-big">0</div>
+        <div class="result-score-label" id="result-pct">0% de réussite</div>
+
+        <!-- Stats -->
+        <div class="result-grid">
+          <div class="result-stat">
+            <div class="result-stat-label">⏱️ Temps total</div>
+            <div class="result-stat-value text-cyan" id="result-time">00:00</div>
+          </div>
+          <div class="result-stat">
+            <div class="result-stat-label">❌ Erreurs critiques</div>
+            <div class="result-stat-value text-danger" id="result-errors">0</div>
+          </div>
+          <div class="result-stat">
+            <div class="result-stat-label">📉 Pénalités</div>
+            <div class="result-stat-value text-warning" id="result-penalties">0</div>
+          </div>
+          <div class="result-stat">
+            <div class="result-stat-label">⭐ Bonus temps</div>
+            <div class="result-stat-value text-success" id="result-bonus">0</div>
+          </div>
+        </div>
+
+        <!-- Grille niveaux -->
+        <p style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:14px;font-weight:600">Score par niveau</p>
+        <div class="result-level-grid" id="result-level-grid"></div>
+
+        <!-- Message pédagogique -->
+        <div class="result-message">
+          <strong style="color:var(--accent-cyan);display:block;margin-bottom:8px">🎓 Message pédagogique</strong>
+          "Un bon diagnostic commence bien avant le microscope : il débute dès la prise en charge du prélèvement."<br><br>
+          Chaque étape de la chaîne pré-analytique et analytique est un maillon essentiel de la qualité diagnostique en anatomie pathologique.
+        </div>
+
+        <!-- Actions finales -->
+        <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center">
+          <button class="btn-start" onclick="location.reload()">
+            🔄 Rejouer le scénario
+          </button>
+          <button class="btn btn-ghost btn-lg" onclick="window.print()">
+            🖨️ Imprimer mon bilan
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /game-container -->
+
+  <!-- Scripts (ordre important) -->
+  <script src="js/data.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/level1.js"></script>
+  <script src="js/level2.js"></script>
+  <script src="js/level3.js"></script>
+  <script src="js/level4.js"></script>
+  <script src="js/level5.js"></script>
+
+  <script>
+    // Initialisation au chargement
+    document.addEventListener('DOMContentLoaded', () => {
+      Game.init();
+    });
+  </script>
+
+  <!-- ── Particle Canvas ────────────────────── -->
+  <script>
+  /* ── Medical Background Animation ─────────────────────────── */
+  (function() {
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+
+    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    /* ── Colour palette ─────────────────────── */
+    const C = { cyan: 'rgba(0,229,255,', blue: 'rgba(41,121,255,', violet: 'rgba(170,0,255,', teal: 'rgba(29,233,182,' };
+
+    /* ── Floating entity factory ────────────────────────────── */
+    function mkEntity(type) {
+      return {
+        type,
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.22,
+        vy: (Math.random() * 0.15 + 0.04) * (Math.random() > 0.5 ? 1 : -1),
+        scale: Math.random() * 0.5 + 0.55,
+        alpha: Math.random() * 0.12 + 0.04,
+        rot: (Math.random() - 0.5) * 0.02,
+        angle: Math.random() * Math.PI * 2,
+        color: [C.cyan, C.blue, C.violet, C.teal][Math.floor(Math.random() * 4)],
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.012 + Math.random() * 0.01
+      };
+    }
+
+    /* ── Draw a doctor silhouette ─────────────────────────── */
+    function drawDoctor(x, y, s, a, color) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(s, s);
+      ctx.globalAlpha = a;
+      ctx.strokeStyle = color + '1)';
+      ctx.fillStyle   = color + '0.15)';
+      ctx.lineWidth = 2.5;
+
+      // Head
+      ctx.beginPath();
+      ctx.arc(0, -52, 13, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+
+      // Body / coat
+      ctx.beginPath();
+      ctx.moveTo(-18, -38);
+      ctx.lineTo(-22, 0);
+      ctx.lineTo(-14, 0);
+      ctx.lineTo(-10, 30);
+      ctx.lineTo(10, 30);
+      ctx.lineTo(14, 0);
+      ctx.lineTo(22, 0);
+      ctx.lineTo(18, -38);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+
+      // Arms
+      ctx.beginPath();
+      ctx.moveTo(-18, -30); ctx.lineTo(-34, -8); ctx.lineTo(-28, -4);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(18, -30); ctx.lineTo(34, -8); ctx.lineTo(28, -4);
+      ctx.stroke();
+
+      // Stethoscope
+      ctx.beginPath();
+      ctx.arc(-6, -20, 6, 0, Math.PI * 2);
+      ctx.strokeStyle = color + '0.8)';
+      ctx.lineWidth = 1.8;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-6, -14); ctx.bezierCurveTo(-6, -4, 6, -4, 6, -16);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(6, -16, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Cross on pocket
+      ctx.strokeStyle = color + '0.9)';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(8, -22); ctx.lineTo(8, -14); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(4, -18); ctx.lineTo(12, -18); ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /* ── Draw a surgeon silhouette ──────────────────────────── */
+    function drawSurgeon(x, y, s, a, color) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(s, s);
+      ctx.globalAlpha = a;
+      ctx.strokeStyle = color + '1)';
+      ctx.fillStyle   = color + '0.12)';
+      ctx.lineWidth = 2.5;
+
+      // Head with surgical cap
+      ctx.beginPath();
+      ctx.arc(0, -50, 13, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+
+      // Surgical cap
+      ctx.beginPath();
+      ctx.moveTo(-15, -55); ctx.lineTo(15, -55);
+      ctx.bezierCurveTo(15, -70, -15, -70, -15, -55);
+      ctx.fill(); ctx.stroke();
+
+      // Surgical mask
+      ctx.beginPath();
+      ctx.roundRect(-10, -46, 20, 12, 4);
+      ctx.fillStyle = color + '0.25)';
+      ctx.fill(); ctx.stroke();
+
+      // Scrubs body
+      ctx.fillStyle = color + '0.12)';
+      ctx.beginPath();
+      ctx.moveTo(-20, -36);
+      ctx.lineTo(-24, 5);
+      ctx.lineTo(-15, 5);
+      ctx.lineTo(-12, 32);
+      ctx.lineTo(12, 32);
+      ctx.lineTo(15, 5);
+      ctx.lineTo(24, 5);
+      ctx.lineTo(20, -36);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+
+      // Arms raised (operating position)
+      ctx.strokeStyle = color + '1)';
+      ctx.beginPath();
+      ctx.moveTo(-20, -28); ctx.lineTo(-38, -42); ctx.lineTo(-32, -48);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(20, -28); ctx.lineTo(38, -42); ctx.lineTo(32, -48);
+      ctx.stroke();
+
+      // Scalpel in right hand
+      ctx.strokeStyle = color + '0.9)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(32, -48); ctx.lineTo(48, -60);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(46, -62); ctx.lineTo(52, -56); ctx.lineTo(48, -60);
+      ctx.closePath(); ctx.fill();
+
+      ctx.restore();
+    }
+
+    /* ── Draw a pathologist at microscope ──────────────────── */
+    function drawPathologist(x, y, s, a, color) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(s, s);
+      ctx.globalAlpha = a;
+      ctx.strokeStyle = color + '1)';
+      ctx.fillStyle   = color + '0.12)';
+      ctx.lineWidth = 2.5;
+
+      // Head
+      ctx.beginPath();
+      ctx.arc(-10, -62, 12, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+
+      // Body (bent forward)
+      ctx.beginPath();
+      ctx.moveTo(-24, -50); ctx.lineTo(-30, -18); ctx.lineTo(-16, -18);
+      ctx.lineTo(-14, 10); ctx.lineTo(2, 10); ctx.lineTo(4, -18); ctx.lineTo(4, -50);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+
+      // Arm on microscope
+      ctx.beginPath();
+      ctx.moveTo(4, -40); ctx.lineTo(22, -30); ctx.lineTo(20, -24);
+      ctx.stroke();
+
+      // Microscope
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      // Base
+      ctx.moveTo(8, 20); ctx.lineTo(38, 20);
+      // Stand
+      ctx.moveTo(23, 20); ctx.lineTo(23, -18);
+      // Arm
+      ctx.moveTo(23, -14); ctx.lineTo(30, -14);
+      // Eyepiece
+      ctx.moveTo(30, -14); ctx.lineTo(30, -32);
+      ctx.stroke();
+      // Objective lens
+      ctx.beginPath();
+      ctx.arc(30, -32, 5, 0, Math.PI * 2);
+      ctx.fillStyle = color + '0.3)';
+      ctx.fill(); ctx.stroke();
+      // Stage
+      ctx.beginPath();
+      ctx.roundRect(16, -5, 14, 8, 2);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /* ── Draw a nurse silhouette ─────────────────────────── */
+    function drawNurse(x, y, s, a, color) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(s, s);
+      ctx.globalAlpha = a;
+      ctx.strokeStyle = color + '1)';
+      ctx.fillStyle   = color + '0.12)';
+      ctx.lineWidth = 2.5;
+
+      // Head
+      ctx.beginPath();
+      ctx.arc(0, -52, 12, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+
+      // Nurse cap
+      ctx.beginPath();
+      ctx.moveTo(-14, -62); ctx.lineTo(14, -62); ctx.lineTo(12, -56); ctx.lineTo(-12, -56);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      // Cross on cap
+      ctx.beginPath();
+      ctx.moveTo(0, -64); ctx.lineTo(0, -60); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-2, -62); ctx.lineTo(2, -62); ctx.stroke();
+
+      // Body (dress uniform)
+      ctx.beginPath();
+      ctx.moveTo(-16, -40); ctx.lineTo(-20, 5); ctx.lineTo(-8, 5);
+      ctx.lineTo(-6, 30); ctx.lineTo(6, 30); ctx.lineTo(8, 5);
+      ctx.lineTo(20, 5); ctx.lineTo(16, -40);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+
+      // Arms
+      ctx.beginPath();
+      ctx.moveTo(-16, -32); ctx.lineTo(-32, -16); ctx.lineTo(-26, -12);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(16, -32); ctx.lineTo(32, -16); ctx.lineTo(26, -12);
+      ctx.stroke();
+
+      // Clipboard
+      ctx.beginPath();
+      ctx.roundRect(24, -20, 14, 20, 3);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(27, -16); ctx.lineTo(35, -16);
+      ctx.moveTo(27, -12); ctx.lineTo(35, -12);
+      ctx.moveTo(27, -8); ctx.lineTo(32, -8);
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /* ── Draw floating DNA helix ─────────────────────────── */
+    function drawDNA(x, y, s, a, color, t) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(s * 0.7, s * 0.7);
+      ctx.globalAlpha = a * 0.9;
+      ctx.lineWidth = 2;
+
+      const len = 80, turns = 2.5;
+      for (let i = 0; i < len; i++) {
+        const frac = i / len;
+        const angle = frac * Math.PI * turns * 2 + t * 0.8;
+        const x1 = Math.cos(angle) * 18;
+        const x2 = Math.cos(angle + Math.PI) * 18;
+        const y1 = frac * len - len / 2;
+
+        // Backbone dots
+        if (i % 4 === 0) {
+          ctx.beginPath(); ctx.arc(x1, y1, 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = C.cyan + (a * 1.2) + ')'; ctx.fill();
+          ctx.beginPath(); ctx.arc(x2, y1, 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = C.violet + (a * 1.2) + ')'; ctx.fill();
+
+          // Rungs
+          ctx.beginPath();
+          ctx.moveTo(x1, y1); ctx.lineTo(x2, y1);
+          ctx.strokeStyle = color + (a * 0.5) + ')';
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+
+    /* ── Draw ECG / heartbeat line ───────────────────────── */
+    function drawECG(x, y, s, a, color, t) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(s * 1.2, s * 1.2);
+      ctx.globalAlpha = a * 0.9;
+      ctx.strokeStyle = color + '1)';
+      ctx.lineWidth = 2.2;
+      ctx.lineJoin = 'round';
+
+      const pts = [
+        [-80,0],[-55,0],[-50,-4],[-45,0],[-35,0],[-28,-32],[-22,32],[-18,0],[0,0],[10,0],
+        [15,-4],[20,0],[30,0],[37,-32],[43,32],[47,0],[65,0],[70,0]
+      ];
+      // Animate offset
+      const offset = (t * 30) % 150 - 75;
+
+      ctx.beginPath();
+      pts.forEach((p, i) => {
+        const px = p[0] + offset;
+        if (i === 0) ctx.moveTo(px, p[1]);
+        else ctx.lineTo(px, p[1]);
+      });
+      ctx.stroke();
+
+      // Glow dot at active position
+      const activeX = (t * 30) % 150 - 75;
+      ctx.beginPath();
+      ctx.arc(activeX, 0, 4, 0, Math.PI * 2);
+      ctx.fillStyle = color + '0.9)';
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    /* ── Draw floating microscope icon ───────────────────── */
+    function drawMicroscope(x, y, s, a, color) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(s * 0.8, s * 0.8);
+      ctx.globalAlpha = a;
+      ctx.strokeStyle = color + '1)';
+      ctx.fillStyle   = color + '0.18)';
+      ctx.lineWidth = 3;
+
+      ctx.beginPath();
+      ctx.moveTo(-25, 30); ctx.lineTo(25, 30); // base
+      ctx.moveTo(0, 30); ctx.lineTo(0, -10);   // stand
+      ctx.moveTo(0, -8); ctx.lineTo(16, -8);    // arm
+      ctx.moveTo(16, -8); ctx.lineTo(16, -34);  // tube
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(16, -38, 7, 5, 0, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.rect(-14, 2, 28, 12);
+      ctx.fill(); ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /* ── Entities pool ──────────────────────────────────── */
+    const TYPES = ['doctor','surgeon','pathologist','nurse','dna','ecg','microscope'];
+    const weights = [3,2,2,2,3,2,2]; // probability weights
+    const totalW = weights.reduce((a,b) => a+b, 0);
+
+    function pickType() {
+      let r = Math.random() * totalW;
+      for (let i = 0; i < TYPES.length; i++) { r -= weights[i]; if (r <= 0) return TYPES[i]; }
+      return 'doctor';
+    }
+
+    const entities = Array.from({ length: 18 }, () => mkEntity(pickType()));
+
+    /* ── Ambient particles ──────────────────────────────── */
+    const ambients = Array.from({ length: 40 }, () => ({
+      x: Math.random() * (typeof W !== 'undefined' ? W : window.innerWidth),
+      y: Math.random() * (typeof H !== 'undefined' ? H : window.innerHeight),
+      r: Math.random() * 1.5 + 0.3,
+      vx: (Math.random() - 0.5) * 0.2,
+      vy: (Math.random() - 0.5) * 0.2,
+      a: Math.random() * 0.2 + 0.05,
+      color: [C.cyan, C.blue, C.violet, C.teal][Math.floor(Math.random() * 4)]
+    }));
+
+    /* ── Main draw loop ─────────────────────────────────── */
+    let t = 0;
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      t += 0.016;
+
+      // Ambient particles
+      ambients.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < -5) p.x = W + 5;
+        if (p.x > W + 5) p.x = -5;
+        if (p.y < -5) p.y = H + 5;
+        if (p.y > H + 5) p.y = -5;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color + p.a + ')'; ctx.fill();
+      });
+
+      // Medical entities
+      entities.forEach(e => {
+        e.x += e.vx; e.y += e.vy;
+        e.angle += e.rot;
+        e.pulse += e.pulseSpeed;
+        const breathe = 1 + Math.sin(e.pulse) * 0.02;
+        const sa = e.alpha + Math.sin(e.pulse) * 0.015;
+
+        // Wrap around
+        const pad = 120;
+        if (e.x < -pad) e.x = W + pad;
+        if (e.x > W + pad) e.x = -pad;
+        if (e.y < -pad) e.y = H + pad;
+        if (e.y > H + pad) e.y = -pad;
+
+        ctx.save();
+        ctx.translate(e.x, e.y);
+        ctx.rotate(e.angle);
+        ctx.scale(breathe, breathe);
+        ctx.translate(-e.x, -e.y);
+
+        switch(e.type) {
+          case 'doctor':      drawDoctor(e.x, e.y, e.scale, sa, e.color); break;
+          case 'surgeon':     drawSurgeon(e.x, e.y, e.scale, sa, e.color); break;
+          case 'pathologist': drawPathologist(e.x, e.y, e.scale, sa, e.color); break;
+          case 'nurse':       drawNurse(e.x, e.y, e.scale, sa, e.color); break;
+          case 'dna':         drawDNA(e.x, e.y, e.scale, sa, e.color, t + e.pulse); break;
+          case 'ecg':         drawECG(e.x, e.y, e.scale, sa, e.color, t + e.pulse * 0.5); break;
+          case 'microscope':  drawMicroscope(e.x, e.y, e.scale, sa, e.color); break;
+        }
+        ctx.restore();
+      });
+
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>
+
+</body>
+</html>
