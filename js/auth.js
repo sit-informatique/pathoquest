@@ -47,8 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (userDoc.exists() && userDoc.data().status === "approved") {
           // Access granted
-          document.getElementById('screen-auth').classList.remove('active');
+          document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
           document.getElementById('screen-home').classList.add('active');
+          Game.init(); // Réinitialiser l'HUD au login
         } else {
           auth.signOut();
           showMsg("Votre compte est en attente de validation par l'administrateur.");
@@ -81,6 +82,21 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('form-login-block').style.display='block';
       } catch (error) {
         showMsg("Erreur lors de l'inscription : " + error.message);
+      }
+    });
+  }
+
+  // Observer l'état de l'utilisateur (garder la session active)
+  if (auth) {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists() && userDoc.data().status === "approved") {
+          document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+          document.getElementById('screen-home').classList.add('active');
+        } else {
+          auth.signOut();
+        }
       }
     });
   }

@@ -22,7 +22,7 @@ const Game = (() => {
   function init() {
     renderHUD();
     bindNavigation();
-    showScreen('home');
+    // showScreen('home'); // Désactivé : géré par auth.js (Firebase)
     updateHUD();
   }
 
