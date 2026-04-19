@@ -8,6 +8,8 @@
   <meta name="keywords" content="anatomie pathologique, histologie, macroscopie, microscopie, lobectomie, pédagogie médicale, serious game">
   <meta name="author" content="PathoQuest — Pédagogie en Anatomie Pathologique">
   <link rel="stylesheet" href="css/style.css">
+  <!-- Firebase SDK -->
+  <script type="module" src="js/auth.js"></script>
 </head>
 <body>
 
@@ -422,8 +424,52 @@
   <!-- Conteneur principal -->
   <div id="game-container">
 
+    <!-- ── ÉCRAN D'AUTHENTIFICATION ────────────────────────── -->
+    <div id="screen-auth" class="screen active">
+      <div class="auth-container" style="max-width:450px;margin:0 auto;background:var(--bg-primary);border:1px solid var(--border-glass);border-radius:var(--r-md);box-shadow:var(--shadow-card);padding:40px;position:relative;z-index:100;margin-top:10vh;">
+        <div class="auth-header" style="text-align:center;margin-bottom:30px;">
+          <h2 style="color:var(--cyan);font-size:1.8rem;font-weight:800;margin-bottom:8px;">PathoQuest</h2>
+          <p style="color:var(--text-secondary);font-size:0.9rem;">Portail d'accès réservé aux laboratoires</p>
+        </div>
+
+        <!-- Connexion -->
+        <div id="form-login-block">
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:0.8rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;">Email professionnel</label>
+            <input type="email" id="auth-login-email" placeholder="nom@laboratoire.com" style="width:100%;padding:12px;border:1.5px solid var(--border-glass);border-radius:var(--r-sm);font-size:0.95rem;">
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:0.8rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;">Mot de passe</label>
+            <input type="password" id="auth-login-pw" placeholder="••••••••" style="width:100%;padding:12px;border:1.5px solid var(--border-glass);border-radius:var(--r-sm);font-size:0.95rem;">
+          </div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:10px" id="btn-login">Se Connecter</button>
+          <div style="text-align:center;margin-top:20px;font-size:0.85rem;color:var(--text-secondary);cursor:pointer;" onclick="document.getElementById('form-login-block').style.display='none'; document.getElementById('form-register-block').style.display='block'">Pas encore de compte ? <span style="color:var(--cyan);font-weight:700;text-decoration:underline;">Demander un accès</span></div>
+        </div>
+
+        <!-- Inscription -->
+        <div id="form-register-block" style="display:none">
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:0.8rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;">Nom Complet</label>
+            <input type="text" id="auth-reg-name" placeholder="Dr. Jeanne Dupont" style="width:100%;padding:12px;border:1.5px solid var(--border-glass);border-radius:var(--r-sm);font-size:0.95rem;">
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:0.8rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;">Email professionnel</label>
+            <input type="email" id="auth-reg-email" placeholder="nom@laboratoire.com" style="width:100%;padding:12px;border:1.5px solid var(--border-glass);border-radius:var(--r-sm);font-size:0.95rem;">
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:0.8rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;">Mot de passe</label>
+            <input type="password" id="auth-reg-pw" placeholder="••••••••" style="width:100%;padding:12px;border:1.5px solid var(--border-glass);border-radius:var(--r-sm);font-size:0.95rem;">
+          </div>
+          <button class="btn btn-success" style="width:100%;justify-content:center;margin-top:10px" id="btn-register">Créer mon compte</button>
+          <div style="text-align:center;margin-top:20px;font-size:0.85rem;color:var(--text-secondary);cursor:pointer;" onclick="document.getElementById('form-register-block').style.display='none'; document.getElementById('form-login-block').style.display='block'">Vous avez déjà un compte ? <span style="color:var(--cyan);font-weight:700;text-decoration:underline;">Se connecter</span></div>
+        </div>
+        
+        <div id="auth-error-msg" style="color:var(--danger); font-size:0.8rem; margin-top:15px; text-align:center; font-weight:bold;"></div>
+      </div>
+    </div>
+
     <!-- ── ÉCRAN ACCUEIL ──────────────────────────────────────── -->
-    <div id="screen-home" class="screen active">
+    <div id="screen-home" class="screen">
       <div id="screen-home-inner" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 64px);padding:60px 24px;text-align:center">
 
         <div class="home-badge">🎓 Serious Game · Anatomie Pathologique</div>
