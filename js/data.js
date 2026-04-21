@@ -14,155 +14,82 @@ const GAME_DATA = {
     maxScore: 150,
 
     checklist: [
-      {
-        id: "cl_fixateur_type", category: "conservation",
-        text: "Type de fixateur : Formol tamponné 10% (neutre)",
-        required: true
-      },
-      {
-        id: "cl_fixateur_delai", category: "conservation",
-        text: "Délai de fixation adapté (6–48h selon taille du prélèvement)",
-        required: true
-      },
-      {
-        id: "cl_fixateur_volume", category: "conservation",
-        text: "Volume de fixateur ≥ 10× le volume du prélèvement",
-        required: true
-      },
-      {
-        id: "cl_contenant", category: "conservation",
-        text: "Contenant adapté (flacon large, hermétique, résistant)",
-        required: true
-      },
-      {
-        id: "cl_integrite", category: "conservation",
-        text: "Intégrité du prélèvement (non écrasé, non fragmenté inutilement)",
-        required: true
-      },
-      {
-        id: "cl_nom", category: "etiquetage",
-        text: "Nom patronymique ET marital + Prénom",
-        required: true
-      },
-      {
-        id: "cl_sexe_naissance", category: "etiquetage",
-        text: "Sexe + Date de naissance du patient",
-        required: true
-      },
-      {
-        id: "cl_id_patient", category: "etiquetage",
-        text: "N° d'identification du patient (Sécurité Sociale ou équivalent)",
-        required: true
-      },
-      {
-        id: "cl_adresse", category: "etiquetage",
-        text: "Adresse / Service d'hospitalisation ou de consultation",
-        required: true
-      },
-      {
-        id: "cl_medecin", category: "etiquetage",
-        text: "Nom + coordonnées du médecin préleveur",
-        required: true
-      },
-      {
-        id: "cl_urgence", category: "demande",
-        text: "Caractère urgent ou non précisé sur la fiche",
-        required: true
-      },
-      {
-        id: "cl_clinique", category: "demande",
-        text: "Renseignements cliniques + recherches particulières indiqués",
-        required: true
-      },
-      {
-        id: "cl_nature_siege", category: "demande",
-        text: "Nature et siège du prélèvement précisés",
-        required: true
-      },
-      {
-        id: "cl_date_prelevement", category: "demande",
-        text: "Date et heure du prélèvement notées",
-        required: true
-      },
-      {
-        id: "cl_correspondants", category: "demande",
-        text: "Nom des correspondants et leurs coordonnées",
-        required: true
-      },
-      {
-        id: "cl_concordance", category: "concordance",
-        text: "Concordance parfaite entre la fiche de demande et l'étiquette du flacon",
-        required: true
-      }
+      { id: "cl_cons_fixateur", category: "conservation", text: "Présence de fixateur (pas à sec)", required: true },
+      { id: "cl_cons_nature", category: "conservation", text: "Nature du fixateur (Formol 10%)", required: true },
+      { id: "cl_cons_volume", category: "conservation", text: "Volume de fixateur ≥ 10-20 fois le volume de la pièce", required: true },
+      
+      { id: "cl_trans_etanche", category: "transport", text: "Étanchéité du récipient de transport", required: true },
+      { id: "cl_trans_delai", category: "transport", text: "Respect du délai d'acheminement (ischémie froide)", required: true },
+      
+      { id: "cl_et_identite", category: "etiquetage", text: "Concordance Nom/Prénom sur l'étiquette", required: true },
+      { id: "cl_et_siege", category: "etiquetage", text: "Siège et latéralité précisés sur le flacon", required: true },
+      { id: "cl_et_prescripteur", category: "etiquetage", text: "Identification claire du prescripteur", required: true },
+      
+      { id: "cl_fd_motif", category: "demande", text: "Présence du motif d'exérèse et renseignements cliniques", required: true },
+      { id: "cl_fd_atcd", category: "demande", text: "Antécédents et données d'imagerie mentionnés", required: true },
+      { id: "cl_fd_date", category: "demande", text: "Date et heure du prélèvement renseignées", required: true }
     ],
 
     scenario: {
-      // Que l'étudiant verra sur le prélèvement simulé
-      contenant: "Flacon hermétique rigide — contenu: Formol tamponné 10%",
-      volume_fixateur: "Volume fixateur : INSUFFISANT (estimation ×3 seulement)",
-      etiquette: "M. BENALI Karim — né 12/04/1958 — N°SS: 1 58 04 13 005 012 — Service Thoracique",
-      medecin: "Dr. MEZIANE S. — Chirurgie thoracique — Tél. non renseigné",
+      contenant: "Petit flacon — Lobectomie occupant tout l'espace",
+      volume_fixateur: "Volume de formol dérisoire (fixation à sec suspectée)",
+      etiquette: "M. BENALI Karim — Lobectomie supérieure droite — Dr. MEZIANE S.",
       fiche: {
-        urgence: "NON PRÉCISÉ",
-        clinique: "Masse pulmonaire droite suspecte, tabagique 40 PA",
-        nature: "Lobectomie pulmonaire supérieure droite",
-        date: "15/04/2026 — Heure : non notée",
+        urgence: "Non précisée",
+        clinique: "Masse suspecte, tabagique - Absence de date/heure",
+        nature: "Pièce de lobectomie supérieure droite",
+        date: "Date : 15/04/2026 — Heure : NON NOTÉE",
         correspondants: "Dr. MEZIANE S."
       }
     },
 
     anomalies: [
       {
-        id: "an_volume_fixateur",
+        id: "an_vol_insuffisant",
         categorie: "conservation",
         critical: false,
-        label: "Volume de fixateur insuffisant",
-        explication: "Le volume de fixateur doit être au moins 10× le volume du prélèvement. Un volume insuffisant entraîne une mauvaise pénétration et des artefacts de fixation (nécrose centrale).",
+        label: "Volume de fixateur insuffisant (Conservation)",
+        explication: "Le volume de formol est nettement inférieur au ratio recommandé (10:1), risquant une autolyse du centre de la pièce.",
         penalite: -10
       },
       {
-        id: "an_heure_manquante",
-        categorie: "demande",
+        id: "an_absence_heure",
+        categorie: "identitovigilance",
         critical: false,
-        label: "Date et heure du prélèvement non renseignées",
-        explication: "La date et l'heure du prélèvement sont essentielles pour calculer le délai de fixation et valider la qualité pré-analytique. Leur absence rend impossible la vérification du respect des délais réglementaires.",
+        label: "Absence d'heure de prélèvement (Clinique)",
+        explication: "L'absence d'heure empêche le calcul précis de l'ischémie froide et du temps de fixation.",
         penalite: -10
       },
       {
-        id: "an_telephone_medecin",
-        categorie: "demande",
+        id: "an_renseignements_vagues",
+        categorie: "identitovigilance",
         critical: false,
-        label: "Coordonnées du médecin incomplètes (tél. manquant)",
-        explication: "Les coordonnées complètes du préleveur sont indispensables pour tout contact en cas de résultat urgent ou d'anomalie.",
-        penalite: -10
-      },
-      {
-        id: "an_contenant_inadequat",
-        categorie: "conservation",
-        critical: false,
-        label: "Contenant inadapté",
-        explication: "Le contenant doit être rigide, hermétique et de taille adaptée au prélèvement. Un contenant inadapté (trop petit, non hermétique, fragile) risque de compromettre l'intégrité du tissu et de provoquer une fuite de fixateur.",
+        label: "Renseignements cliniques lacunaires",
+        explication: "Le manque de données d'imagerie et d'antécédents précis complique l'interprétation histologique.",
         penalite: -10
       }
     ],
 
     anomalies_critiques: [
       {
-        id: "anc_absence_id",
-        label: "Absence totale d'identification",
-        explication: "Un prélèvement sans identification doit être REFUSÉ. Il ne peut être analysé car aucun résultat ne peut être attribué au bon patient. Risque majeur d'erreur médicale.",
+        id: "anc_erreur_lateralite",
+        categorie: "identitovigilance",
+        label: "Erreur de latéralité ou de siège (Discordance)",
+        explication: "Une discordance sur le siège (ex: droite vs gauche) est une erreur critique d'identitovigilance nécessitant un refus immédiat.",
         penalite: -50
       },
       {
-        id: "anc_discordance",
-        label: "Discordance entre fiche et étiquette",
-        explication: "Si le nom sur la fiche diffère de celui du flacon, le prélèvement DOIT être refusé ou mis en réserve jusqu'à clarification. Risque vital.",
+        id: "anc_absence_fixateur",
+        categorie: "conservation",
+        label: "Absence totale de fixateur (Prélèvement à sec)",
+        explication: "Un prélèvement reçu à sec sans fixateur subit une dégradation irréversible des tissus.",
         penalite: -50
       },
       {
-        id: "anc_absence_formol",
-        label: "Absence de fixateur (prélèvement envoyé en frais sans raison)",
-        explication: "Sans fixateur, les protéines cellulaires se dénaturent rapidement. Le tissu devient inexploitable en moins de quelques heures. Refus obligatoire sauf pour examen extemporané.",
+        id: "anc_discordance_identite",
+        categorie: "identitovigilance",
+        label: "Discordance d'identité (Fiche vs Flacon)",
+        explication: "Toute incertitude sur l'identité du patient est un critère de refus absolu pour la sécurité du patient.",
         penalite: -50
       }
     ],

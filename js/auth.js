@@ -104,7 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
           Game.init(); // Réinitialiser l'HUD au login
         } else {
           auth.signOut();
-          showMsg("Votre compte est en attente de validation par l'administrateur.");
+          document.getElementById('form-login-block').style.display='none'; 
+          document.getElementById('form-pending-block').style.display='block';
         }
       } catch (error) {
         showMsg("Erreur de connexion. Vérifiez vos identifiants.");
@@ -114,37 +115,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnRegister) {
     btnRegister.addEventListener('click', async () => {
+      console.log("Tentative d'inscription démarrée...");
       if (!auth) return showMsg("Firebase non configuré. Veuillez entrer les clés dans js/auth.js");
+      
       const name = document.getElementById('auth-reg-name').value;
       const email = document.getElementById('auth-reg-email').value;
       const pw = document.getElementById('auth-reg-pw').value;
+      
       if (!name || !email || !pw) return showMsg("Veuillez remplir tous les champs.");
       
+      const originalBtnText = btnRegister.textContent;
+      btnRegister.textContent = "Création du compte...";
+      btnRegister.disabled = true;
+
       try {
+        console.log("Création de l'utilisateur dans Firebase Auth...");
         const userCredential = await createUserWithEmailAndPassword(auth, email, pw);
+        console.log("Utilisateur créé. UID:", userCredential.user.uid);
+        
+        console.log("Enregistrement du profil dans Firestore...");
         await setDoc(doc(db, "users", userCredential.user.uid), {
           name: name,
           email: email,
           status: "pending",
           createdAt: new Date().toISOString()
         });
-        auth.signOut();
-        showMsg("Inscription réussie ! En attente de validation par l'administrateur.");
+        
+        console.log("Déconnexion immédiate...");
+        await auth.signOut();
+        
+        console.log("Affichage de l'écran de succès.");
         document.getElementById('form-register-block').style.display='none'; 
-        document.getElementById('form-login-block').style.display='block';
+        document.getElementById('form-pending-block').style.display='block';
       } catch (error) {
-        showMsg("Erreur lors de l'inscription : " + error.message);
+        console.error("Erreur durant l'inscription:", error);
+        showMsg("Erreur : " + error.message);
+      } finally {
+        btnRegister.textContent = originalBtnText;
+        btnRegister.disabled = false;
       }
     });
   }
 
+
   // Observer l'état de l'utilisateur (garder la session active)
   if (auth) {
     onAuthStateChanged(auth, async (user) => {
+      console.log("État Auth changé :", user ? "Connecté (" + user.email + ")" : "Déconnecté");
       if (user) {
         const userEmail = user.email.toLowerCase();
         
         if (ADMIN_EMAILS.includes(userEmail)) {
+          console.log("Accès Admin détecté.");
           document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
           document.getElementById('screen-admin').classList.add('active');
           loadAdminList();
@@ -153,14 +175,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists() && userDoc.data().status === "approved") {
+          console.log("Étudiant approuvé. Redirection Home.");
           document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
           document.getElementById('screen-home').classList.add('active');
         } else {
+          console.warn("Utilisateur non approuvé ou inconnu. Déconnexion.");
           auth.signOut();
         }
       }
     });
   }
+
 
   // Déconnexion Admin
   const btnLogoutAdmin = document.getElementById('btn-logout-admin');

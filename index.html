@@ -463,8 +463,20 @@
           <button class="btn btn-success" style="width:100%;justify-content:center;margin-top:10px" id="btn-register">Créer mon compte</button>
           <div style="text-align:center;margin-top:20px;font-size:0.85rem;color:var(--text-secondary);cursor:pointer;" onclick="document.getElementById('form-register-block').style.display='none'; document.getElementById('form-login-block').style.display='block'">Vous avez déjà un compte ? <span style="color:var(--cyan);font-weight:700;text-decoration:underline;">Se connecter</span></div>
         </div>
-        
+
+        <!-- Attente Approbation -->
+        <div id="form-pending-block" style="display:none; text-align:center; padding: 20px 0;">
+          <div style="font-size:4rem; margin-bottom:20px; animation: pulse 2s infinite">⏳</div>
+          <h3 style="color:var(--cyan); margin-bottom:12px; font-weight:800;">Demande reçue</h3>
+          <p style="color:var(--text-secondary); font-size:0.9rem; line-height:1.6; margin-bottom:24px;">
+            Votre demande d'accès a été transmise avec succès.<br>
+            Un administrateur doit maintenant <strong>valider votre compte</strong> avant que vous ne puissiez accéder au Serious Game.
+          </p>
+          <button class="btn btn-ghost" style="width:100%; justify-content:center;" onclick="document.getElementById('form-pending-block').style.display='none'; document.getElementById('form-login-block').style.display='block'">Retour à la connexion</button>
+        </div>
+
         <div id="auth-error-msg" style="color:var(--danger); font-size:0.8rem; margin-top:15px; text-align:center; font-weight:bold;"></div>
+
       </div>
     </div>
 

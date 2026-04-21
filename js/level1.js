@@ -31,45 +31,38 @@ const Level1 = (() => {
 
     // Categories d'items checklist
     const cats = {
-      conservation: { label: "🧪 Conservation & Transport", items: [] },
-      etiquetage:   { label: "🏷️ Étiquetage du flacon",    items: [] },
-      demande:      { label: "📄 Fiche de demande",         items: [] },
-      concordance:  { label: "🔗 Concordance fiche / flacon", items: [] }
+      conservation: { label: "🧪 Conservation", items: [] },
+      transport:    { label: "🚚 Transport",    items: [] },
+      etiquetage:   { label: "🏷️ Étiquetage",    items: [] },
+      demande:      { label: "📄 Fiche de demande", items: [] }
     };
     d.checklist.forEach(item => cats[item.category]?.items.push(item));
 
-    // Aperçu du prélèvement simulé
-    const sc = d.scenario;
-    const fiche = sc.fiche;
-
     container.innerHTML = `
-      <!-- Aperçu du prélèvement -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
-        <div class="card" style="margin-bottom:0">
-          <div class="card-title"><span class="card-icon">🫙</span> Prélèvement reçu</div>
-          <div style="font-size:0.88rem;line-height:1.8;color:var(--text-secondary)">
-            <div><strong style="color:var(--text-primary)">Contenant :</strong> ${sc.contenant}</div>
-            <div style="color:var(--warning);margin-top:6px"><strong>⚠️ Volume fixateur :</strong> ${sc.volume_fixateur}</div>
-            <div style="margin-top:6px"><strong style="color:var(--text-primary)">Étiquette :</strong> ${sc.etiquette}</div>
-            <div style="margin-top:6px"><strong style="color:var(--text-primary)">Médecin :</strong> ${sc.medecin}</div>
-          </div>
+      <!-- Modal Overlay -->
+      <div id="modal-overlay" class="modal-overlay" onclick="Level1.hideModal()">
+        <div class="modal-content">
+          <button class="modal-close">&times;</button>
+          <img id="modal-img" src="" class="modal-img">
         </div>
-        <div class="card" style="margin-bottom:0">
-          <div class="card-title"><span class="card-icon">📋</span> Fiche de demande</div>
-          <div style="font-size:0.88rem;line-height:1.8;color:var(--text-secondary)">
-            <div><strong style="color:var(--text-primary)">Urgence :</strong> <span style="color:var(--warning)">${fiche.urgence}</span></div>
-            <div><strong style="color:var(--text-primary)">Clinique :</strong> ${fiche.clinique}</div>
-            <div><strong style="color:var(--text-primary)">Nature :</strong> ${fiche.nature}</div>
-            <div><strong style="color:var(--text-primary)">Date :</strong> <span style="color:var(--warning)">${fiche.date}</span></div>
-            <div><strong style="color:var(--text-primary)">Correspondants :</strong> ${fiche.correspondants}</div>
-          </div>
+      </div>
+
+      <!-- Aperçu Visuel -->
+      <div class="asset-grid">
+        <div class="level-asset-card" onclick="Level1.showModal('assets/vial_insufficient.png')">
+          <img src="assets/vial_insufficient.png" class="level-asset-img" alt="Prélèvement reçu">
+          <div class="asset-label"><span>🫙</span> Prélèvement reçu (cliquer pour zoomer)</div>
+        </div>
+        <div class="level-asset-card" onclick="Level1.showModal('assets/request_form.png')">
+          <img src="assets/request_form.png" class="level-asset-img" alt="Fiche de demande">
+          <div class="asset-label"><span>📋</span> Fiche de demande (cliquer pour zoomer)</div>
         </div>
       </div>
 
       <!-- Checklist -->
       <div class="card">
         <div class="card-title"><span class="card-icon">✅</span> Étape 1 — Vérification des points de conformité</div>
-        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:20px">Cochez chaque point après vérification.</p>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:20px">Observez attentivement les documents ci-dessus et cochez les points vérifiés.</p>
         ${Object.values(cats).map(cat => `
           <div class="checklist-group">
             <div class="checklist-group-title">${cat.label}</div>
@@ -89,23 +82,31 @@ const Level1 = (() => {
       <!-- Décision -->
       <div class="card">
         <div class="card-title"><span class="card-icon">⚠️</span> Étape 2 — Signalement des Non-Conformités détectées</div>
-        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:20px">Sélectionnez toutes les anomalies que vous avez identifiées dans ce prélèvement.</p>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:20px">Identifiez les anomalies présentes dans ce dossier.</p>
 
-        <div class="checklist-group-title">🔴 Non-conformités CRITIQUES (refus obligatoire)</div>
+        <div class="checklist-group-title" style="color:var(--danger)">🔴 Anomalies de Conservation & Transport</div>
         <div class="anomaly-grid" style="margin-bottom:20px">
-          ${d.anomalies_critiques.map(a => `
+          ${d.anomalies.filter(a => a.categorie === 'conservation').map(a => `
+            <div class="anomaly-option" id="am-${a.id}" onclick="Level1.toggleAnomalie('${a.id}')">
+              <div>${a.label}</div>
+            </div>
+          `).join('')}
+          ${d.anomalies_critiques.filter(a => a.categorie === 'conservation').map(a => `
             <div class="anomaly-option critical" id="ac-${a.id}" onclick="Level1.toggleCritique('${a.id}')">
-              <div class="anomaly-tag tag-critique">Critique</div>
               <div>${a.label}</div>
             </div>
           `).join('')}
         </div>
 
-        <div class="checklist-group-title">🟡 Non-conformités MINEURES (signalement + acceptation)</div>
+        <div class="checklist-group-title" style="color:var(--info)">🔵 Anomalies d'Identitovigilance & Clinique</div>
         <div class="anomaly-grid">
-          ${d.anomalies.map(a => `
+          ${d.anomalies.filter(a => a.categorie === 'identitovigilance').map(a => `
             <div class="anomaly-option" id="am-${a.id}" onclick="Level1.toggleAnomalie('${a.id}')">
-              <div class="anomaly-tag tag-mineur">Mineur</div>
+              <div>${a.label}</div>
+            </div>
+          `).join('')}
+          ${d.anomalies_critiques.filter(a => a.categorie === 'identitovigilance').map(a => `
+            <div class="anomaly-option critical" id="ac-${a.id}" onclick="Level1.toggleCritique('${a.id}')">
               <div>${a.label}</div>
             </div>
           `).join('')}
@@ -225,15 +226,11 @@ const Level1 = (() => {
     });
 
     // Pénalités si anomalie mineure NON signalée mais réelle
-    if (!selectedAnomalies.has('an_volume_fixateur')) {
+    if (!selectedAnomalies.has('an_vol_insuffisant')) {
       Game.addPenalty(10, LEVEL_NUM);
       Game.toast('error', 'Non-conformité manquée', 'Volume de fixateur insuffisant non signalé !', -10);
     }
-    if (!selectedAnomalies.has('an_contenant_inadequat')) {
-      Game.addPenalty(10, LEVEL_NUM);
-      Game.toast('error', 'Non-conformité manquée', 'Contenant inadapté non signalé !', -10);
-    }
-    if (!selectedAnomalies.has('an_heure_manquante')) {
+    if (!selectedAnomalies.has('an_absence_heure')) {
       Game.addPenalty(10, LEVEL_NUM);
       Game.toast('error', 'Non-conformité manquée', "Date et heure du prélèvement non signalées !", -10);
     }
@@ -384,9 +381,8 @@ const Level1 = (() => {
       <div style="background:var(--bg-card);border:1px solid ${borderColor};border-radius:var(--radius-lg);padding:28px;">
         <div style="font-size:1.1rem;font-weight:700;color:${color};margin-bottom:12px">${msg}</div>
         <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.7;margin-bottom:20px">
-          <strong style="color:var(--text-primary)">🎓 Point pédagogique :</strong> La phase pré-analytique est la plus critique du circuit. 
-          70% des erreurs diagnostiques en anatomie pathologique trouvent leur origine dans une mauvaise prise en charge pré-analytique. 
-          Un prélèvement mal fixé ou mal identifié peut rendre impossible tout diagnostic fiable.
+          <strong style="color:var(--text-primary)">🎓 Point pédagogique :</strong> La phase pré-analytique est la source de plus de 70% des erreurs diagnostiques. 
+          Le prélèvement est unique et irremplaçable. Un prélèvement mal fixé ou mal identifié peut rendre impossible tout diagnostic fiable.
         </div>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
           <button class="btn btn-primary btn-lg" onclick="Game.nextLevel()">
@@ -400,6 +396,18 @@ const Level1 = (() => {
     fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
+  function showModal(src) {
+    const overlay = document.getElementById('modal-overlay');
+    const img = document.getElementById('modal-img');
+    img.src = src;
+    overlay.classList.add('active');
+  }
+
+  function hideModal() {
+    const overlay = document.getElementById('modal-overlay');
+    overlay.classList.remove('active');
+  }
+
   return { 
     init, 
     toggleCheck, 
@@ -409,6 +417,8 @@ const Level1 = (() => {
     refuser, 
     remplacerContenant, 
     contacterChirurgien, 
-    finaliserAcceptation 
+    finaliserAcceptation,
+    showModal,
+    hideModal
   };
 })();
