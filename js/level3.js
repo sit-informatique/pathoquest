@@ -23,11 +23,6 @@ const Level3 = (() => {
 
     document.getElementById('level3-content').innerHTML = `
       <div class="card">
-        <div class="card-title"><span class="card-icon">📌</span> Contexte</div>
-        <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.6">${d.piege_description}</p>
-      </div>
-
-      <div class="card">
         <div class="card-title"><span class="card-icon">🔀</span> Remettez les étapes dans le bon ordre</div>
         <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:24px">
           Faites glisser les étapes depuis la zone de gauche vers la zone de droite dans le bon ordre.
@@ -320,6 +315,12 @@ const Level3 = (() => {
 
         <div style="font-size:0.85rem;font-weight:600;color:var(--text-secondary);margin-bottom:12px">📚 Ordre correct et détails :</div>
         ${detailsHtml}
+
+        <div style="margin-top:24px; padding:16px; background:var(--bg-glass); border-left:4px solid var(--accent-cyan); border-radius:var(--radius-sm);">
+          <div style="font-weight:700; color:var(--text-primary); margin-bottom:8px;"><span class="card-icon">📌</span> Conclusion</div>
+          <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.6;margin:0;">${d.piege_description}</p>
+        </div>
+
         <div style="margin-top:20px">
           <button class="btn btn-primary btn-lg" onclick="Game.nextLevel()">Niveau 4 : Microscopie →</button>
         </div>
