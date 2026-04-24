@@ -196,4 +196,15 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('screen-auth').classList.add('active');
     });
   }
+
+  // Déconnexion Etudiant
+  const btnLogoutStudent = document.getElementById('btn-logout-student');
+  if (btnLogoutStudent) {
+    btnLogoutStudent.addEventListener('click', () => {
+      auth.signOut();
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-auth').classList.add('active');
+      location.reload(); // Refresh to stop the game state
+    });
+  }
 });

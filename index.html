@@ -547,7 +547,10 @@
     <div id="screen-home" class="screen">
       <div id="screen-home-inner" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 64px);padding:60px 24px;text-align:center">
 
-        <div class="home-badge">🎓 Serious Game · Anatomie Pathologique</div>
+        <div style="display:flex; justify-content:space-between; width:100%; max-width:800px; margin-bottom:20px; align-items:center;">
+          <div class="home-badge" style="margin:0;">🎓 Serious Game · Anatomie Pathologique</div>
+          <button class="btn btn-ghost" id="btn-logout-student" style="font-size:0.85rem; padding:6px 12px; border:1px solid var(--danger); color:var(--danger);">Déconnexion</button>
+        </div>
 
         <h1 class="home-title">
           De la pièce opératoire<br>
