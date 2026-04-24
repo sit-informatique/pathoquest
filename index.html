@@ -13,17 +13,69 @@
 </head>
 <body>
 
-  <!-- Particle canvas (ambient only) -->
-  <canvas id="particles-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.2"></canvas>
+  <!-- ── Real Microscopy Photo Background ── -->
+  <div id="micro-bg">
+    <!-- Biologiste layer (right side, fixed) -->
+    <div id="micro-bg-lab"></div>
+    <!-- Microscopy cells mosaic (scrolling) -->
+    <div id="micro-bg-cells"></div>
+  </div>
 
-  <!-- ── Medical Characters Scene ───────────────────────── -->
-  <div id="medical-scene" aria-hidden="true">
+  <style>
+  #micro-bg {
+    position: fixed; inset: 0; z-index: 0; overflow: hidden;
+    pointer-events: none;
+  }
+  #micro-bg-cells {
+    position: absolute; inset: 0;
+    background: url('assets/Gemini_Generated_Image_vvrm8vvvrm8vvvrm.png') center/cover no-repeat;
+    opacity: 0.18;
+    animation: bgDrift 40s ease-in-out infinite alternate;
+    filter: saturate(1.3) brightness(1.05);
+  }
+  #micro-bg-lab {
+    position: absolute;
+    width: 480px; height: 360px;
+    background: url('assets/Gemini_Generated_Image_glc63qglc63qglc6.png') center/cover no-repeat;
+    opacity: 0;
+    border-radius: 20px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 35%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 35%, transparent 100%);
+    filter: saturate(0.95) brightness(1.1);
+    animation: drWander 80s ease-in-out infinite;
+    pointer-events: none;
+  }
+  /* Supprime toutes les silhouettes SVG */
+  .mchar, #medical-scene { display: none !important; }
 
-    <!-- DOCTOR (left) -->
-    <div class="mchar mchar-doctor" id="mc-doctor" title="Médecin">
-      <svg viewBox="0 0 120 220" xmlns="http://www.w3.org/2000/svg" class="mchar-svg">
-        <!-- Lab coat body -->
-        <rect x="30" y="90" width="60" height="90" rx="6" fill="#e8f4ff" stroke="#b8d4f0" stroke-width="1.5"/>
+  @keyframes bgDrift {
+    0%   { transform: scale(1.05) translate(0px, 0px); }
+    33%  { transform: scale(1.08) translate(-15px, -10px); }
+    66%  { transform: scale(1.06) translate(10px, -5px); }
+    100% { transform: scale(1.05) translate(-8px, 8px); }
+  }
+  @keyframes drWander {
+    0%   { top: 5vh;  left: 5vw;  opacity: 0.28; transform: scale(0.90); }
+    12%  { top: 10vh; left: 55vw; opacity: 0.32; transform: scale(0.95); }
+    25%  { top: 40vh; left: 70vw; opacity: 0.30; transform: scale(1.00); }
+    37%  { top: 60vh; left: 45vw; opacity: 0.35; transform: scale(0.95); }
+    50%  { top: 55vh; left: 10vw; opacity: 0.28; transform: scale(0.90); }
+    62%  { top: 25vh; left: 20vw; opacity: 0.33; transform: scale(0.97); }
+    75%  { top: 8vh;  left: 60vw; opacity: 0.30; transform: scale(1.02); }
+    87%  { top: 45vh; left: 30vw; opacity: 0.32; transform: scale(0.93); }
+    100% { top: 5vh;  left: 5vw;  opacity: 0.28; transform: scale(0.90); }
+  }
+
+  </style>
+
+  <!-- Particle canvas (above real photos) -->
+  <canvas id="particles-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0.70"></canvas>
+
+
+
+  <!-- Toasts & Feedback -->
+  <div id="feedback-container"></div>
+
         <!-- Coat lapels -->
         <polygon points="50,90 30,120 45,90" fill="#cce0f5"/>
         <polygon points="70,90 90,120 75,90" fill="#cce0f5"/>
@@ -269,11 +321,7 @@
 
   </div>
 
-  <style>
-  /* ═══════════════════════════════════════════════
-     MEDICAL SCENE — Characters
-  ══════════════════════════════════════════════ */
-  #medical-scene {
+
     position: fixed;
     inset: 0;
     pointer-events: none;
@@ -391,16 +439,10 @@
     50%      { transform: scaleY(1.012) translateY(-3px); }
   }
 
-  /* Responsive: hide secondary chars on small screens */
-  @media (max-width: 900px) {
-    .mchar-nurse, .mchar-pathologist { display: none; }
-    .mchar-doctor .mchar-svg { width: 100px; }
-    .mchar-surgeon .mchar-svg { width: 100px; }
-  }
-  @media (max-width: 600px) {
-    #medical-scene { display: none; }
-  }
-  </style>
+
+
+
+
 
 
   <!-- Toasts & Feedback -->
@@ -735,22 +777,524 @@
     });
   </script>
 
-  <!-- ── Particle Canvas ────────────────────── -->
+  <!-- ── Human Body Festival Background ── -->
   <script>
-  /* ── Medical Background Animation ─────────────────────────── */
   (function() {
     const canvas = document.getElementById('particles-canvas');
-    const ctx = canvas.getContext('2d');
+    const ctx    = canvas.getContext('2d');
     let W, H;
-
     function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
+    let t = 0;
+
+    function flow(x,y) {
+      const a = Math.sin(x*.0022+t*.28)*Math.cos(y*.0022+t*.20)*Math.PI*1.6;
+      return { vx:Math.cos(a)*.18, vy:Math.sin(a)*.11 };
+    }
+
+    function drawBiologist(px, py, sc, al) {
+      ctx.save(); ctx.translate(px,py); ctx.scale(sc,sc); ctx.globalAlpha=al;
+      ctx.fillStyle='#E3F2FD'; ctx.strokeStyle='#90CAF9'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.roundRect(-28,-8,56,85,6); ctx.fill(); ctx.stroke();
+      ctx.fillStyle='#1565C0'; ctx.fillRect(-11,-8,22,18);
+      ctx.fillStyle='#BBDEFB';
+      ctx.beginPath(); ctx.moveTo(-10,-8); ctx.lineTo(-28,20); ctx.lineTo(-14,-8); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(10,-8); ctx.lineTo(28,20); ctx.lineTo(14,-8); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='#fff'; ctx.strokeStyle='#90CAF9'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.roundRect(13,10,11,14,2); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle='#EF5350'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(18,10); ctx.lineTo(17,0); ctx.stroke();
+      ctx.strokeStyle='#90CAF9'; ctx.lineWidth=9; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(-28,5); ctx.lineTo(-45,40); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(28,5); ctx.lineTo(55,30); ctx.stroke();
+      ctx.fillStyle='#FFB74D';
+      ctx.beginPath(); ctx.arc(-45,44,8,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(55,34,8,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#1A237E'; ctx.lineWidth=0;
+      ctx.beginPath(); ctx.roundRect(-20,75,17,42,5); ctx.fill();
+      ctx.beginPath(); ctx.roundRect(4,75,17,42,5); ctx.fill();
+      ctx.fillStyle='#212121';
+      ctx.beginPath(); ctx.ellipse(-11,118,13,6,0,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(13,118,13,6,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#FFB74D';
+      ctx.beginPath(); ctx.roundRect(-7,-24,14,18,4); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(0,-46,22,27,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#37474F';
+      ctx.beginPath(); ctx.ellipse(0,-64,22,14,0,0,Math.PI*2); ctx.fill();
+      ctx.fillRect(-22,-64,44,10);
+      ctx.strokeStyle='#333'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.arc(-9,-46,7,0,Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(9,-46,7,0,Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-2,-46); ctx.lineTo(2,-46); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-22,-43); ctx.lineTo(-26,-42); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(22,-43); ctx.lineTo(26,-42); ctx.stroke();
+      ctx.fillStyle='#1A237E';
+      ctx.beginPath(); ctx.arc(-9,-46,3,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(9,-46,3,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='#8D6E63'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.arc(0,-36,7,0.2,Math.PI-.2); ctx.stroke();
+      ctx.strokeStyle='#455A64'; ctx.fillStyle='#78909C'; ctx.lineWidth=3; ctx.lineCap='round';
+      ctx.beginPath(); ctx.roundRect(28,68,52,9,3); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(54,68); ctx.lineTo(54,18); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(54,20); ctx.lineTo(72,20); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(72,20); ctx.lineTo(72,-8); ctx.stroke();
+      ctx.fillStyle='#607D8B';
+      ctx.beginPath(); ctx.ellipse(72,-12,8,5,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(72,38,5,9,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle='#78909C'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.roundRect(44,40,20,8,2); ctx.stroke();
+      const beam = ctx.createLinearGradient(54,50,54,68);
+      beam.addColorStop(0,'rgba(255,235,59,.65)'); beam.addColorStop(1,'rgba(255,235,59,0)');
+      ctx.beginPath(); ctx.moveTo(50,50); ctx.lineTo(47,68); ctx.lineTo(61,68); ctx.lineTo(58,50);
+      ctx.fillStyle=beam; ctx.fill();
+      ctx.fillStyle='rgba(33,150,243,.18)'; ctx.strokeStyle='rgba(33,150,243,.5)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.roundRect(-40,130,80,22,10); ctx.fill(); ctx.stroke();
+      ctx.fillStyle='#1565C0'; ctx.font='bold 11px Outfit,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Biologiste',0,145);
+      ctx.restore();
+    }
+
+    function drawRBC(x,y,r,alpha,angle) {
+      ctx.save(); ctx.translate(x,y); ctx.rotate(angle); ctx.globalAlpha=alpha;
+      const ty=.42+.36*Math.abs(Math.sin(angle*1.8)); ctx.scale(1,ty);
+      const g=ctx.createRadialGradient(-r*.2,-r*.2,r*.02,0,0,r);
+      g.addColorStop(0,'rgba(239,83,80,1)'); g.addColorStop(.45,'rgba(211,47,47,.95)');
+      g.addColorStop(.82,'rgba(183,28,28,.85)'); g.addColorStop(1,'rgba(150,10,10,.5)');
+      ctx.beginPath(); ctx.ellipse(0,0,r,r,0,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+      const d=ctx.createRadialGradient(0,0,0,0,0,r*.46);
+      d.addColorStop(0,'rgba(90,5,5,.80)'); d.addColorStop(.6,'rgba(140,20,20,.38)'); d.addColorStop(1,'rgba(140,20,20,0)');
+      ctx.beginPath(); ctx.ellipse(0,0,r*.46,r*.46,0,0,Math.PI*2); ctx.fillStyle=d; ctx.fill();
+      ctx.beginPath(); ctx.ellipse(-r*.3,-r*.3,r*.23,r*.09,-0.6,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,210,210,.55)'; ctx.fill();
+      ctx.restore();
+      ctx.save(); ctx.translate(x,y); ctx.globalAlpha=alpha*.22;
+      const h=ctx.createRadialGradient(0,0,r*.5,0,0,r*2.2);
+      h.addColorStop(0,'rgba(239,83,80,.55)'); h.addColorStop(1,'rgba(239,83,80,0)');
+      ctx.beginPath(); ctx.arc(0,0,r*2.2,0,Math.PI*2); ctx.fillStyle=h; ctx.fill();
+      ctx.restore();
+    }
+
+    function drawWBC(c) {
+      const {x,y,r,alpha,id}=c; ctx.save(); ctx.translate(x,y); ctx.globalAlpha=alpha;
+      const ph=t*.28+id, pts=10;
+      ctx.beginPath();
+      for(let i=0;i<=pts;i++){
+        const a=(i/pts)*Math.PI*2;
+        const w=r*(.82+.22*Math.sin(a*3+ph)+.10*Math.cos(a*2+ph*1.5));
+        i===0?ctx.moveTo(Math.cos(a)*w,Math.sin(a)*w*.9):ctx.lineTo(Math.cos(a)*w,Math.sin(a)*w*.9);
+      }
+      ctx.closePath();
+      const bg=ctx.createRadialGradient(-r*.15,-r*.15,0,0,0,r);
+      bg.addColorStop(0,'rgba(179,229,252,.80)'); bg.addColorStop(.6,'rgba(129,212,250,.58)'); bg.addColorStop(1,'rgba(79,195,247,.20)');
+      ctx.fillStyle=bg; ctx.fill(); ctx.strokeStyle='rgba(2,136,209,.5)'; ctx.lineWidth=1.5; ctx.stroke();
+      const np=t*.14+id*1.9;
+      [{ox:0,oy:-r*.18,rx:r*.30,ry:r*.23},{ox:r*.20,oy:r*.12,rx:r*.23,ry:r*.26},{ox:-r*.20,oy:r*.14,rx:r*.25,ry:r*.21}]
+      .forEach((lb,li)=>{
+        const nx=lb.ox+Math.sin(np+li*1.7)*r*.04, ny=lb.oy+Math.cos(np+li*2.2)*r*.04;
+        const ng=ctx.createRadialGradient(nx-lb.rx*.3,ny-lb.ry*.3,0,nx,ny,lb.rx);
+        ng.addColorStop(0,'rgba(103,58,183,.88)'); ng.addColorStop(.6,'rgba(81,45,168,.62)'); ng.addColorStop(1,'rgba(55,30,140,.15)');
+        ctx.beginPath(); ctx.ellipse(nx,ny,lb.rx,lb.ry,np*.09,0,Math.PI*2); ctx.fillStyle=ng; ctx.fill();
+      });
+      ctx.restore();
+    }
+
+    function drawPlatelet(p) {
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.angle); ctx.globalAlpha=p.alpha;
+      ctx.beginPath(); ctx.ellipse(0,0,p.r,p.r*.55,0,0,Math.PI*2);
+      const g=ctx.createRadialGradient(0,0,0,0,0,p.r);
+      g.addColorStop(0,'rgba(255,214,0,1)'); g.addColorStop(.5,'rgba(255,160,0,.85)'); g.addColorStop(1,'rgba(230,100,0,.15)');
+      ctx.fillStyle=g; ctx.fill(); ctx.restore();
+    }
+
+    function drawDNA(x,y,sc,al,ph) {
+      ctx.save(); ctx.translate(x,y); ctx.scale(sc,sc); ctx.globalAlpha=al;
+      for(let i=0;i<90;i++){
+        const frac=i/90, a=frac*Math.PI*5.6+ph, x1=Math.cos(a)*18, x2=-x1, y1=frac*90-45;
+        if(i%3===0){
+          ctx.beginPath(); ctx.arc(x1,y1,2.8,0,Math.PI*2); ctx.fillStyle=`rgba(33,150,243,${al})`; ctx.fill();
+          ctx.beginPath(); ctx.arc(x2,y1,2.8,0,Math.PI*2); ctx.fillStyle=`rgba(244,67,54,${al})`; ctx.fill();
+          ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y1);
+          ctx.strokeStyle=`rgba(120,120,120,${al*.5})`; ctx.lineWidth=1.2; ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawTissue() {
+      const rh=50, cols=Math.ceil(W/80)+2, rows=Math.ceil(H/70)+2;
+      ctx.save(); ctx.globalAlpha=.08; ctx.strokeStyle='rgba(33,150,243,.7)'; ctx.lineWidth=1;
+      for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+        const ox=(r%2)*40, cx=c*80+ox-40, cy=r*70-35;
+        ctx.beginPath();
+        for(let i=0;i<6;i++){
+          const a=(i/6)*Math.PI*2-Math.PI/6;
+          i===0?ctx.moveTo(cx+rh*Math.cos(a),cy+rh*Math.sin(a)):ctx.lineTo(cx+rh*Math.cos(a),cy+rh*Math.sin(a));
+        }
+        ctx.closePath(); ctx.stroke();
+        ctx.beginPath(); ctx.arc(cx,cy,rh*.28,0,Math.PI*2);
+        ctx.fillStyle='rgba(33,150,243,.12)'; ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawFibrin(cells,maxD,col){
+      for(let i=0;i<cells.length;i++) for(let j=i+1;j<cells.length;j++){
+        const dx=cells[i].x-cells[j].x, dy=cells[i].y-cells[j].y, d=Math.sqrt(dx*dx+dy*dy);
+        if(d<maxD){ ctx.save(); ctx.globalAlpha=(1-d/maxD)*.22; ctx.strokeStyle=col;
+          ctx.lineWidth=.8; ctx.setLineDash([4,6]);
+          ctx.beginPath(); ctx.moveTo(cells[i].x,cells[i].y); ctx.lineTo(cells[j].x,cells[j].y); ctx.stroke();
+          ctx.setLineDash([]); ctx.restore(); }
+      }
+    }
+
+    const mk=(d)=>({x:Math.random()*W,y:Math.random()*H,r:(13+Math.random()*18)*d,angle:Math.random()*Math.PI*2,rotSpeed:(Math.random()-.5)*.008,alpha:(.48+Math.random()*.32)*d,pulse:Math.random()*Math.PI*2,pulseSpeed:.02+Math.random()*.012,vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.20});
+    function wrap(c,p){if(c.x<-p)c.x=W+p;if(c.x>W+p)c.x=-p;if(c.y<-p)c.y=H+p;if(c.y>H+p)c.y=-p;}
+    function applyFlow(c){const f=flow(c.x,c.y);c.x+=c.vx+f.vx*(c.r/16);c.y+=c.vy+f.vy*(c.r/16);}
+
+    const rbcsFar=Array.from({length:14},()=>mk(.44)), rbcsMid=Array.from({length:18},()=>mk(.75)), rbcsNear=Array.from({length:9},()=>mk(1));
+    const wbcs=Array.from({length:6},()=>({x:Math.random()*W,y:Math.random()*H,r:32+Math.random()*18,alpha:.78+Math.random()*.15,vx:(Math.random()-.5)*.10,vy:(Math.random()-.5)*.07,id:Math.random()*100}));
+    const platelets=Array.from({length:38},()=>({x:Math.random()*W,y:Math.random()*H,r:5+Math.random()*5,angle:Math.random()*Math.PI*2,rotSpeed:(Math.random()-.5)*.06,alpha:.55,vx:(Math.random()-.5)*.85,vy:(Math.random()-.5)*.65,pulse:Math.random()*Math.PI*2}));
+    const dnas=Array.from({length:5},()=>({x:Math.random()*W,y:Math.random()*H,scale:.55+Math.random()*.8,alpha:.38+Math.random()*.35,phase:Math.random()*Math.PI*2,vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.08}));
+    const plasma=Array.from({length:80},()=>({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2.5,alpha:.18+Math.random()*.28,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.3,pulse:Math.random()*Math.PI*2,pulseSpeed:.03+Math.random()*.02}));
+
+    function draw(){
+      ctx.clearRect(0,0,W,H); t+=.016;
+      drawTissue();
+      plasma.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.pulse+=p.pulseSpeed;wrap(p,5);const a=p.alpha*(.6+.4*Math.sin(p.pulse));ctx.save();ctx.globalAlpha=a;const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*2);g.addColorStop(0,'rgba(33,150,243,.9)');g.addColorStop(1,'rgba(33,150,243,0)');ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();ctx.restore();});
+      dnas.forEach(d=>{d.x+=d.vx;d.y+=d.vy;d.phase+=.025;wrap(d,90);drawDNA(d.x,d.y,d.scale,d.alpha,d.phase);});
+      drawFibrin(rbcsMid,140,'rgba(33,150,243,1)');
+      rbcsFar.forEach(c=>{c.angle+=c.rotSpeed*.5;c.pulse+=c.pulseSpeed;applyFlow(c);wrap(c,60);drawRBC(c.x,c.y,c.r*(1+.03*Math.sin(c.pulse)),c.alpha,c.angle);});
+      wbcs.forEach(c=>{applyFlow(c);wrap(c,80);drawWBC(c);});
+      rbcsMid.forEach(c=>{c.angle+=c.rotSpeed;c.pulse+=c.pulseSpeed;applyFlow(c);wrap(c,60);drawRBC(c.x,c.y,c.r*(1+.04*Math.sin(c.pulse)),c.alpha,c.angle);});
+      platelets.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.angle+=p.rotSpeed;p.pulse+=.05;wrap(p,10);p.alpha=.45+.30*Math.abs(Math.sin(p.pulse));drawPlatelet(p);});
+      rbcsNear.forEach(c=>{c.angle+=c.rotSpeed*1.3;c.pulse+=c.pulseSpeed;applyFlow(c);wrap(c,60);drawRBC(c.x,c.y,c.r*(1+.045*Math.sin(c.pulse)),c.alpha,c.angle);});
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>
+
+
+
+
+</body>
+
     window.addEventListener('resize', resize);
     resize();
 
-    /* ── Colour palette ─────────────────────── */
-    const C = { cyan: 'rgba(0,229,255,', blue: 'rgba(41,121,255,', violet: 'rgba(170,0,255,', teal: 'rgba(29,233,182,' };
+    let t = 0;
 
-    /* ── Floating entity factory ────────────────────────────── */
+    /* ── Plasma flow field ─────────────────────────────────────── */
+    function plasmaFlow(x, y) {
+      const angle = Math.sin(x * 0.0025 + t * 0.3) * Math.cos(y * 0.0025 + t * 0.22) * Math.PI * 1.5;
+      return { vx: Math.cos(angle) * 0.14, vy: Math.sin(angle) * 0.09 };
+    }
+
+    /* ── Draw Red Blood Cell (Erythrocyte) ────────────────────── */
+    function drawRBC(x, y, r, alpha, angle) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.globalAlpha = alpha;
+
+      // Tilt effect — biconcave disc perspective
+      const tiltY = 0.38 + 0.32 * Math.abs(Math.sin(angle * 1.7));
+      ctx.scale(1, tiltY);
+
+      // Outer membrane
+      const memGrd = ctx.createRadialGradient(-r*0.2, -r*0.2, r*0.05, 0, 0, r);
+      memGrd.addColorStop(0,   `rgba(239,83,80,${alpha * 0.95})`);
+      memGrd.addColorStop(0.55,`rgba(198,40,40,${alpha * 0.82})`);
+      memGrd.addColorStop(0.83,`rgba(183,28,28,${alpha * 0.65})`);
+      memGrd.addColorStop(1,   `rgba(140,10,10,${alpha * 0.30})`);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r, r, 0, 0, Math.PI * 2);
+      ctx.fillStyle = memGrd;
+      ctx.fill();
+
+      // Central biconcave dimple (darker center)
+      const dimGrd = ctx.createRadialGradient(0, 0, 0, 0, 0, r * 0.44);
+      dimGrd.addColorStop(0,   `rgba(100,8,8,${alpha * 0.72})`);
+      dimGrd.addColorStop(0.55,`rgba(160,20,20,${alpha * 0.38})`);
+      dimGrd.addColorStop(1,    'rgba(160,20,20,0)');
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r * 0.44, r * 0.44, 0, 0, Math.PI * 2);
+      ctx.fillStyle = dimGrd;
+      ctx.fill();
+
+      // Specular highlight
+      ctx.beginPath();
+      ctx.ellipse(-r*0.28, -r*0.28, r*0.22, r*0.09, -0.6, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,200,200,${alpha * 0.45})`;
+      ctx.fill();
+
+      // Edge ring
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r, r, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(183,28,28,${alpha * 0.3})`;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+
+      ctx.restore();
+
+      // Soft halo (outside transform)
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.globalAlpha = alpha * 0.18;
+      const halo = ctx.createRadialGradient(0, 0, r * 0.6, 0, 0, r * 2.0);
+      halo.addColorStop(0, 'rgba(229,57,53,0.5)');
+      halo.addColorStop(1, 'rgba(229,57,53,0)');
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 2.0, 0, Math.PI * 2);
+      ctx.fillStyle = halo;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    /* ── Draw White Blood Cell (Leukocyte) ────────────────────── */
+    function drawWBC(c) {
+      const { x, y, r, alpha, id } = c;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.globalAlpha = alpha;
+
+      // Amoeboid blob outline
+      const pts = 9;
+      const phase = t * 0.25 + id;
+      ctx.beginPath();
+      for (let i = 0; i <= pts; i++) {
+        const ang = (i / pts) * Math.PI * 2;
+        const wobble = r * (0.82 + 0.20 * Math.sin(ang * 3 + phase) + 0.09 * Math.cos(ang * 2 + phase * 1.4));
+        const px = Math.cos(ang) * wobble;
+        const py = Math.sin(ang) * wobble * 0.88;
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+
+      // Cell body — very pale blue translucent
+      const bodyG = ctx.createRadialGradient(-r*0.18, -r*0.18, 0, 0, 0, r);
+      bodyG.addColorStop(0, `rgba(200,215,255,${alpha * 0.28})`);
+      bodyG.addColorStop(0.65,`rgba(150,175,240,${alpha * 0.16})`);
+      bodyG.addColorStop(1,  `rgba(100,130,210,${alpha * 0.05})`);
+      ctx.fillStyle = bodyG;
+      ctx.fill();
+      ctx.strokeStyle = `rgba(100,140,220,${alpha * 0.22})`;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Multi-lobed nucleus (3 lobes)
+      const np = t * 0.12 + id * 1.8;
+      [
+        { ox: 0,       oy: -r*0.16, rx: r*0.27, ry: r*0.21 },
+        { ox:  r*0.19, oy:  r*0.10, rx: r*0.21, ry: r*0.24 },
+        { ox: -r*0.19, oy:  r*0.12, rx: r*0.23, ry: r*0.19 },
+      ].forEach((lb, li) => {
+        const nx = lb.ox + Math.sin(np + li * 1.6) * r * 0.035;
+        const ny = lb.oy + Math.cos(np + li * 2.1) * r * 0.035;
+        const nG = ctx.createRadialGradient(nx - lb.rx*0.3, ny - lb.ry*0.3, 0, nx, ny, lb.rx);
+        nG.addColorStop(0,   `rgba(120,80,220,${alpha * 0.72})`);
+        nG.addColorStop(0.6, `rgba(90,50,190,${alpha * 0.50})`);
+        nG.addColorStop(1,   `rgba(60,20,160,${alpha * 0.12})`);
+        ctx.beginPath();
+        ctx.ellipse(nx, ny, lb.rx, lb.ry, np * 0.08, 0, Math.PI * 2);
+        ctx.fillStyle = nG;
+        ctx.fill();
+      });
+
+      ctx.restore();
+    }
+
+    /* ── Draw Platelet ────────────────────────────────────────── */
+    function drawPlatelet(p) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+      ctx.globalAlpha = p.alpha;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, p.r, p.r * 0.52, 0, 0, Math.PI * 2);
+      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, p.r);
+      g.addColorStop(0, 'rgba(255,215,80,0.9)');
+      g.addColorStop(0.5,'rgba(255,160,0,0.7)');
+      g.addColorStop(1, 'rgba(200,100,0,0.1)');
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    /* ── Draw plasma micro-particle ───────────────────────────── */
+    function drawPlasmaParticle(p) {
+      ctx.save();
+      ctx.globalAlpha = p.alpha * (0.65 + 0.35 * Math.sin(p.pulse));
+      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 2);
+      g.addColorStop(0, 'rgba(43,108,176,0.8)');
+      g.addColorStop(1, 'rgba(43,108,176,0)');
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    /* ── Draw fibrin connection between nearby cells ──────────── */
+    function drawFibrin(cells, maxDist, color) {
+      for (let i = 0; i < cells.length; i++) {
+        for (let j = i + 1; j < cells.length; j++) {
+          const dx = cells[i].x - cells[j].x;
+          const dy = cells[i].y - cells[j].y;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          if (d < maxDist) {
+            ctx.save();
+            ctx.globalAlpha = (1 - d / maxDist) * 0.10;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 0.6;
+            ctx.beginPath();
+            ctx.moveTo(cells[i].x, cells[i].y);
+            ctx.lineTo(cells[j].x, cells[j].y);
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
+      }
+    }
+
+    /* ── Factory helpers ──────────────────────────────────────── */
+    function mkRBC(depthFactor) {
+      return {
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: (11 + Math.random() * 16) * depthFactor,
+        angle: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.007,
+        alpha: (0.12 + Math.random() * 0.20) * depthFactor,
+        depth: depthFactor,
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.018 + Math.random() * 0.012,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.18,
+      };
+    }
+    function mkWBC() {
+      return {
+        x: Math.random() * W, y: Math.random() * H,
+        r: 30 + Math.random() * 16,
+        alpha: 0.60 + Math.random() * 0.25,
+        vx: (Math.random() - 0.5) * 0.09,
+        vy: (Math.random() - 0.5) * 0.06,
+        id: Math.random() * 100,
+      };
+    }
+    function mkPlatelet() {
+      return {
+        x: Math.random() * W, y: Math.random() * H,
+        r: 4 + Math.random() * 4,
+        alpha: 0.35 + Math.random() * 0.35,
+        angle: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.04,
+        vx: (Math.random() - 0.5) * 0.7,
+        vy: (Math.random() - 0.5) * 0.55,
+        pulse: Math.random() * Math.PI * 2,
+      };
+    }
+    function mkPlasma() {
+      return {
+        x: Math.random() * W, y: Math.random() * H,
+        r: 0.7 + Math.random() * 1.8,
+        alpha: 0.06 + Math.random() * 0.14,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.28,
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.025 + Math.random() * 0.02,
+      };
+    }
+
+    function wrap(c, pad) {
+      if (c.x < -pad) c.x = W + pad;
+      if (c.x > W + pad) c.x = -pad;
+      if (c.y < -pad) c.y = H + pad;
+      if (c.y > H + pad) c.y = -pad;
+    }
+    function applyFlow(c) {
+      const f = plasmaFlow(c.x, c.y);
+      c.x += c.vx + f.vx * (c.r / 18);
+      c.y += c.vy + f.vy * (c.r / 18);
+    }
+
+    /* ── Populations ──────────────────────────────────────────── */
+    const rbcsFar  = Array.from({ length: 12 }, () => mkRBC(0.42));
+    const rbcsMid  = Array.from({ length: 16 }, () => mkRBC(0.72));
+    const rbcsNear = Array.from({ length: 7  }, () => mkRBC(1.0));
+    const wbcs     = Array.from({ length: 5  }, mkWBC);
+    const platelets= Array.from({ length: 32 }, mkPlatelet);
+    const plasma   = Array.from({ length: 70 }, mkPlasma);
+
+    /* ── Main draw loop ───────────────────────────────────────── */
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      t += 0.016;
+
+      // Plasma micro-particles
+      plasma.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.pulse += p.pulseSpeed;
+        wrap(p, 5);
+        drawPlasmaParticle(p);
+      });
+
+      // Fibrin network between mid RBCs
+      drawFibrin(rbcsMid, 130, 'rgba(43,108,176,1)');
+
+      // Far RBCs (very pale, small)
+      rbcsFar.forEach(c => {
+        c.angle += c.rotSpeed * 0.5;
+        c.pulse += c.pulseSpeed;
+        applyFlow(c); wrap(c, 60);
+        const scale = 1 + 0.025 * Math.sin(c.pulse);
+        drawRBC(c.x, c.y, c.r * scale, c.alpha, c.angle);
+      });
+
+      // WBCs (behind main RBCs)
+      wbcs.forEach(c => {
+        applyFlow(c); wrap(c, 80);
+        drawWBC(c);
+      });
+
+      // Mid RBCs
+      rbcsMid.forEach(c => {
+        c.angle += c.rotSpeed;
+        c.pulse += c.pulseSpeed;
+        applyFlow(c); wrap(c, 60);
+        const scale = 1 + 0.035 * Math.sin(c.pulse);
+        drawRBC(c.x, c.y, c.r * scale, c.alpha, c.angle);
+      });
+
+      // Platelets
+      platelets.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        p.angle += p.rotSpeed;
+        p.pulse += 0.045;
+        wrap(p, 10);
+        p.alpha = 0.30 + 0.20 * Math.abs(Math.sin(p.pulse));
+        drawPlatelet(p);
+      });
+
+      // Near RBCs (largest, most visible)
+      rbcsNear.forEach(c => {
+        c.angle += c.rotSpeed * 1.3;
+        c.pulse += c.pulseSpeed;
+        applyFlow(c); wrap(c, 60);
+        const scale = 1 + 0.045 * Math.sin(c.pulse);
+        drawRBC(c.x, c.y, c.r * scale, c.alpha, c.angle);
+      });
+
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>
+
+
+</body>
+</html>
+
     function mkEntity(type) {
       return {
         type,
