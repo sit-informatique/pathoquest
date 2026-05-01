@@ -8,21 +8,10 @@ const Level5 = (() => {
   let submitted = false;
   let answers = {};
 
-  const TNM_RULES = {
-    pt: { pT2a: 'Tumeur > 3 cm et ≤ 4 cm' },
-    pn: { pN1: ' Métastases ganglionnaires péribronchiques homolatérales et/ou hilaires homolatérales' },
-    stade: {
-      'pT2a-pN1-pM0': 'IIB',
-      'pT2a-pN0-pM0': 'IB',
-      'pT2b-pN1-pM0': 'IIB'
-    }
-  };
-
   function init() {
     submitted = false;
     answers = {};
     render();
-    setupTNMCalculator();
   }
 
   function render() {
@@ -32,18 +21,19 @@ const Level5 = (() => {
       <!-- Header CR -->
       <div class="card" style="background:#ffffff;border:1px solid var(--border-glass);box-shadow:var(--shadow-card)">
         <div class="card-title"><span class="card-icon">🏥</span> Compte Rendu Anatomo-Pathologique</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:0.83rem">
-          <div style="background:var(--bg-glass);padding:10px;border-radius:var(--radius-sm)">
-            <div style="color:var(--text-muted);margin-bottom:2px">Patient</div>
-            <div style="font-weight:600">BENALI Karim, 67 ans</div>
+        <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:16px">${d.sous_titre}</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;font-size:0.83rem">
+          <div style="background:var(--bg-glass);padding:12px;border-radius:var(--radius-sm);border-left:3px solid var(--accent-cyan)">
+            <div style="color:var(--text-muted);margin-bottom:3px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em">Patient</div>
+            <div style="font-weight:700;color:var(--text-primary)">${d.patient.nom}</div>
           </div>
-          <div style="background:var(--bg-glass);padding:10px;border-radius:var(--radius-sm)">
-            <div style="color:var(--text-muted);margin-bottom:2px">Prélèvement</div>
-            <div style="font-weight:600">Lobectomie sup. droite</div>
+          <div style="background:var(--bg-glass);padding:12px;border-radius:var(--radius-sm);border-left:3px solid var(--accent-cyan)">
+            <div style="color:var(--text-muted);margin-bottom:3px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em">Prélèvement</div>
+            <div style="font-weight:700;color:var(--text-primary)">${d.patient.prelevement}</div>
           </div>
-          <div style="background:var(--bg-glass);padding:10px;border-radius:var(--radius-sm)">
-            <div style="color:var(--text-muted);margin-bottom:2px">Demandeur</div>
-            <div style="font-weight:600">Dr. MEZIANE — Chirurgie thoracique</div>
+          <div style="background:var(--bg-glass);padding:12px;border-radius:var(--radius-sm);border-left:3px solid var(--accent-cyan)">
+            <div style="color:var(--text-muted);margin-bottom:3px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em">Demandeur</div>
+            <div style="font-weight:700;color:var(--text-primary)">${d.patient.medecin} — Chirurgie thoracique</div>
           </div>
         </div>
       </div>
@@ -53,33 +43,52 @@ const Level5 = (() => {
         <div class="card-title"><span class="card-icon">📋</span> Renseignez les éléments du compte rendu</div>
         <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:24px">
           Complétez tous les champs en vous basant sur vos analyses des niveaux précédents.
+          Les champs marqués <span style="color:var(--danger)">*</span> sont obligatoires.
         </p>
 
         <div class="report-grid">
           ${d.fields.map(f => `
             <div class="report-field">
               <label for="rf-${f.id}">
-                ${f.label}
-                <span style="color:var(--danger)">*</span>
+                ${f.label} <span style="color:var(--danger)">*</span>
               </label>
               ${f.type === 'select' ? `
-                <select id="rf-${f.id}" onchange="Level5.updateField('${f.id}', this.value)">
+                <select id="rf-${f.id}" onchange="Level5.updateField('${f.id}', this.value)"
+                        style="background-color:white;border:1.5px solid var(--border-glass);border-radius:6px;padding:10px 14px;color:var(--text-primary);font-size:0.88rem;width:100%">
                   ${f.options.map(o => `<option value="${o}">${o}</option>`).join('')}
                 </select>
               ` : `
                 <input type="text" id="rf-${f.id}" placeholder="${f.placeholder}"
-                       oninput="Level5.updateField('${f.id}', this.value)">
+                       oninput="Level5.updateField('${f.id}', this.value)"
+                       style="background-color:white;border:1.5px solid var(--border-glass);border-radius:6px;padding:10px 14px;color:var(--text-primary);font-size:0.88rem;width:100%;box-sizing:border-box">
               `}
               <div id="rf-hint-${f.id}" style="font-size:0.72rem;margin-top:4px;min-height:16px"></div>
             </div>
           `).join('')}
+
+          <!-- Statut ganglionnaire DONNÉ -->
+          <div class="report-field" style="grid-column:1/-1">
+            <label>${d.ganglions_donnes.label}</label>
+            <div style="background:rgba(0,212,255,0.07);border:1.5px solid rgba(0,212,255,0.3);border-radius:6px;padding:12px 16px;display:flex;align-items:center;gap:12px">
+              <span style="font-size:1.2rem">ℹ️</span>
+              <div>
+                <div style="font-weight:700;color:var(--accent-cyan);font-size:0.95rem">${d.ganglions_donnes.valeur}</div>
+                <div style="font-size:0.82rem;color:var(--text-secondary);margin-top:2px">${d.ganglions_donnes.detail}</div>
+              </div>
+              <div style="margin-left:auto;font-size:0.75rem;color:var(--text-muted);font-style:italic">Donné par le chirurgien</div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Calculateur pTNM -->
       <div class="card">
-        <div class="card-title"><span class="card-icon">📊</span> Classification pTNM (IASLC 9th Edition, 2024)</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;margin-bottom:20px">
+        <div class="card-title"><span class="card-icon">📊</span> Classification pTNM — 9ème édition IASLC 2025</div>
+        <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:20px">
+          En tenant compte de la taille tumorale, de l'invasion pleurale (PL1) et du statut ganglionnaire N1, établissez la classification pTNM finale.
+        </p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px;margin-bottom:20px">
           ${['pT', 'pN', 'pM'].map(t => `
             <div>
               <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:8px;font-weight:600">${t}</label>
@@ -100,7 +109,7 @@ const Level5 = (() => {
 
         <div class="tnm-display">
           <div class="tnm-label">Classification finale</div>
-          <div class="tnm-value" id="tnm-full">— — —</div>
+          <div class="tnm-value" id="tnm-full">— · — · —</div>
         </div>
       </div>
 
@@ -111,6 +120,9 @@ const Level5 = (() => {
       </div>
       <div id="level5-feedback" class="hidden" style="margin-top:24px"></div>
     `;
+
+    // Init pM0 par défaut et calcul stade
+    updateTNM();
   }
 
   function getTNMOptions(type) {
@@ -124,7 +136,6 @@ const Level5 = (() => {
 
   function updateField(id, value) {
     answers[id] = value;
-    // Petit feedback inline
     const d = GAME_DATA.level5;
     const field = d.fields.find(f => f.id === id);
     const hintEl = document.getElementById('rf-hint-' + id);
@@ -147,11 +158,6 @@ const Level5 = (() => {
     }
   }
 
-  function setupTNMCalculator() {
-    // Init pM0 par défaut
-    updateTNM();
-  }
-
   function updateTNM() {
     const ptEl = document.getElementById('tnm-pt');
     const pnEl = document.getElementById('tnm-pn');
@@ -164,13 +170,13 @@ const Level5 = (() => {
     const pn = pnEl.value;
     const pm = pmEl.value;
 
-    // Calcul simplifié du stade
-    let stade = calculerStade(pt, pn, pm);
+    const stade = calculerStade(pt, pn, pm);
 
     if (fullEl) fullEl.textContent = `${pt} · ${pn} · ${pm}`;
     if (stadeEl) {
       stadeEl.textContent = stade;
-      stadeEl.style.color = stade === 'IIB' ? 'var(--warning)' : stade.startsWith('I') ? 'var(--success)' : 'var(--danger)';
+      stadeEl.style.color = stade === 'IIB' ? 'var(--warning)' :
+                             stade.startsWith('I') ? 'var(--success)' : 'var(--danger)';
     }
   }
 
@@ -186,7 +192,7 @@ const Level5 = (() => {
       'pT1a-pN2': 'IIIA','pT1b-pN2': 'IIIA','pT1c-pN2': 'IIIA',
       'pT2a-pN2': 'IIIA','pT2b-pN2': 'IIIA','pT3-pN2':  'IIIB',
       'pT4-pN2':  'IIIB',
-      'pTx-pN3': 'IIIC', 'pT4-pN3': 'IIIC'
+      'pTx-pN3':  'IIIC', 'pT4-pN3': 'IIIC'
     };
     return stageMap[`${pt}-${pn}`] || '—';
   }
@@ -231,15 +237,16 @@ const Level5 = (() => {
     const tnmCorrect = d.tnm_correct;
     const ptUser = document.getElementById('tnm-pt')?.value;
     const pnUser = document.getElementById('tnm-pn')?.value;
-    const stadeUser = document.getElementById('tnm-stade')?.textContent;
-
     const tnmOk = ptUser === tnmCorrect.pT && pnUser === tnmCorrect.pN;
+
     if (tnmOk) {
       pts += 30;
-      Game.toast('success', 'Classification pTNM correcte !', `${tnmCorrect.pT} · ${tnmCorrect.pN} · ${tnmCorrect.pM} — Stade ${tnmCorrect.stade}`, 30);
+      Game.toast('success', 'Classification pTNM correcte !',
+        `${tnmCorrect.pT} · ${tnmCorrect.pN} · ${tnmCorrect.pM} — Stade ${tnmCorrect.stade}`, 30);
     } else {
       Game.addPenalty(15, LEVEL_NUM);
-      Game.toast('error', 'pTNM incorrect', `Attendu : ${tnmCorrect.pT} · ${tnmCorrect.pN} · ${tnmCorrect.pM} (Stade ${tnmCorrect.stade})`, -15);
+      Game.toast('error', 'pTNM incorrect',
+        `Attendu : ${tnmCorrect.pT} · ${tnmCorrect.pN} · ${tnmCorrect.pM} (Stade ${tnmCorrect.stade})`, -15);
     }
 
     Game.addScore(pts, LEVEL_NUM);
@@ -271,25 +278,24 @@ const Level5 = (() => {
           </table>
         </div>
 
+        <!-- CR de référence -->
         <div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);border-radius:var(--radius-md);padding:16px;margin-bottom:20px">
-          <div style="font-weight:700;color:var(--accent-cyan);margin-bottom:8px">📋 Compte rendu de référence</div>
-          <div style="font-family:var(--font-mono);font-size:0.82rem;line-height:1.8;color:var(--text-secondary)">
-            <strong style="color:var(--text-primary)">Type :</strong> Adénocarcinome invasif — Pattern acinaire (prédominant)<br>
-            <strong style="color:var(--text-primary)">Taille :</strong> 52 mm dans sa plus grande dimension<br>
-            <strong style="color:var(--text-primary)">Grade :</strong> Grade 2 (modérément différencié)<br>
-            <strong style="color:var(--text-primary)">Marges :</strong> R0 — Marge bronchique saine à ≥ 3 cm<br>
-            <strong style="color:var(--text-primary)">Plèvre :</strong> PL1 — Invasion de la plèvre viscérale au niveau de la couche élastique<br>
-            <strong style="color:var(--text-primary)">Ganglions :</strong> pN1 — 1/3 ganglion hilaire homolatéral positif<br>
-            <strong style="color:var(--text-primary)">Classification :</strong> pT2a pN1 pM0 — Stade IIB (IASLC 9th ed., 2024)
+          <div style="font-weight:700;color:var(--accent-cyan);margin-bottom:10px">📋 Compte rendu de référence</div>
+          <div style="font-family:var(--font-mono);font-size:0.82rem;line-height:1.9;color:var(--text-secondary)">
+            <strong style="color:var(--text-primary)">Patient :</strong> ${d.patient.nom} — ${d.patient.prelevement}<br>
+            <strong style="color:var(--text-primary)">Type :</strong> Carcinome épidermoïde — Pattern organoïde (nids et palissades)<br>
+            <strong style="color:var(--text-primary)">Taille :</strong> 5,2 cm dans sa plus grande dimension<br>
+            <strong style="color:var(--text-primary)">Différenciation :</strong> Bien différencié kératinisant (globes cornés, ponts intercellulaires)<br>
+            <strong style="color:var(--text-primary)">Marges :</strong> Recoupe bronchique saine<br>
+            <strong style="color:var(--text-primary)">Statut ganglionnaire :</strong> N1 — 2 ganglions hilaires positifs / 5 prélevés<br>
+            <strong style="color:var(--text-primary)">Classification :</strong> <span style="color:var(--warning);font-weight:700">pT2b · pN1 · pM0 — Stade IIB</span> (IASLC 9th ed., 2025)
           </div>
         </div>
 
-        <div style="font-size:0.85rem;color:var(--text-secondary);padding:16px;background:var(--bg-glass);border-radius:var(--radius-sm);margin-bottom:24px;line-height:1.7">
+        <!-- Message pédagogique -->
+        <div style="font-size:0.85rem;color:var(--text-secondary);padding:16px;background:var(--bg-glass);border-radius:var(--radius-sm);margin-bottom:24px;line-height:1.7;border-left:4px solid var(--accent-cyan)">
           <strong style="color:var(--text-primary);display:block;margin-bottom:8px">🎓 Message pédagogique final :</strong>
-          <em style="color:var(--accent-cyan);font-size:0.95rem;">"Un bon diagnostic commence bien avant le microscope : il débute dès la prise en charge du prélèvement."</em>
-          <br><br>
-          Le compte rendu anatomo-pathologique est le document médico-légal central qui oriente toutes les décisions thérapeutiques. 
-          Sa précision et son exhaustivité conditionnent directement la survie du patient.
+          <em style="color:var(--accent-cyan);font-size:0.92rem;">"${d.message_pedagogique}"</em>
         </div>
 
         <button class="btn btn-primary btn-lg" onclick="Game.goToLevel(6)">

@@ -27,16 +27,20 @@ const Level2 = (() => {
         <div style="display:flex;align-items:stretch;justify-content:space-between;background:var(--bg-lighter);padding:20px;border-radius:var(--radius-md);margin-bottom:15px;position:relative;overflow:hidden">
           
           <!-- Etudiant -->
-          <div style="text-align:center;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;width:150px">
-            <div id="student-macroscopy" style="font-size:3.5rem;margin-bottom:5px;animation:fadeIn 1s ease-out">🧑‍🎓</div>
+          <div style="text-align:center;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;width:165px">
+            <div style="position:relative;width:155px;margin-bottom:5px;animation:fadeIn 1s ease-out">
+              <img src="assets/char_etudiant.png" alt="Étudiante" style="height:195px;width:155px;object-fit:cover;object-position:10% top;display:block;border-radius:10px;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.22));">
+              <div id="student-macroscopy" style="position:absolute;bottom:-4px;right:-4px;font-size:1.4rem;background:rgba(255,255,255,0.95);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.2);"></div>
+            </div>
             <div style="font-size:0.8rem;font-weight:bold;color:var(--text-primary);margin-bottom:10px">Vous</div>
             
             <div id="action-selector" style="width:100%">
               <select class="btn btn-sm btn-ghost" id="student-action-select" style="width:100%;font-size:0.75rem;padding:6px;margin-bottom:8px" onchange="Level2.requestAction(this)">
                 <option value="">-- Que faire ? --</option>
-                <option value="ouvrir">Ouvrir la pièce</option>
                 <option value="decrire">Décrire les lésions</option>
-                <option value="mesurer">Mesurer et Peser</option>
+                <option value="orienter">Orienter la pièce</option>
+                <option value="ouvrir">Ouvrir la pièce</option>
+                <option value="mesurer">Mesurer et encrer</option>
               </select>
             </div>
 
@@ -83,17 +87,30 @@ const Level2 = (() => {
             </div>
           </div>
 
-          <!-- Senior -->
-          <div style="text-align:center;z-index:2;display:flex;flex-direction:column;justify-content:center;width:100px">
-            <div style="font-size:3.5rem;margin-bottom:5px;animation:fadeIn 1s ease-out">👨‍⚕️</div>
-            <div style="font-size:0.8rem;font-weight:bold;color:var(--primary)">Senior</div>
+          <!-- Senior — Silhouette réelle -->
+          <div style="text-align:center;z-index:2;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;width:165px">
+            <img src="assets/doc_senior1.png"
+                 alt="Dr. Pathologiste Senior"
+                 style="
+                   height:195px;
+                   width:155px;
+                   object-fit:cover;
+                   object-position:center top;
+                   display:block;
+                   border-radius:10px;
+                   filter:drop-shadow(0 4px 12px rgba(0,0,0,0.22));
+                   animation:fadeIn 1s ease-out;
+                 ">
+            <div style="font-size:0.82rem;font-weight:700;color:var(--primary,#38bdf8);letter-spacing:0.04em;margin-top:6px">Senior</div>
           </div>
           
         </div>
         
         <!-- Dialogue du senior -->
         <div id="senior-dialogue" style="background:rgba(56, 189, 248, 0.08);border-left:4px solid var(--primary);padding:15px;border-radius:0 8px 8px 0;font-size:0.95rem;color:var(--text-primary);line-height:1.6;transition:all 0.5s">
-          <strong>👨‍⚕️ Dr. Pathologiste (Senior) :</strong> "Observe bien cette pièce anatomique. La qualité de notre macroscopie conditionne l'entièreté de notre diagnostic final et le stade pTNM du patient. Par quoi décides-tu de commencer ?"
+          <strong><img src="assets/doc_senior1.png" alt="Senior" style="width:22px;height:22px;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;margin-right:6px;border:1.5px solid #38bdf8;"> Dr. Pathologiste (Senior) :</strong><br>
+          « Regarde bien cette pièce opératoire. Ici, la macroscopie n'est pas une simple formalité : c'est l'acte qui dicte le stade pTNM et l'avenir thérapeutique du patient. Une erreur maintenant, et tout le reste sera faussé.<br>
+          La pièce est là, fixée et prête. Par quel geste décides-tu de commencer ? »
         </div>
       </div>
 
@@ -101,7 +118,9 @@ const Level2 = (() => {
       <div id="macro-interactive-section" style="opacity:0;pointer-events:none;transition:opacity 0.5s">
         <!-- Cassettes -->
         <div class="card" style="margin-top:20px;text-align:center">
-          <div class="card-title" style="margin-bottom:15px"><span class="card-icon">🎯</span> Prélèvements réalisés (Mise en Cassettes)</div>
+          <div style="font-size:1.05rem; font-weight:600; color:var(--text-primary); margin-bottom:15px; line-height:1.6; padding:10px; border-left:4px solid var(--primary); background:rgba(56,189,248,0.1); border-radius:4px;">
+            <span style="font-size:1.2rem;">🎯</span> Théorie validée, pratique achevée. Voici sur la table le résultat de ton travail : les blocs sont numérotés et placés dans des cassettes. En envoyant ces prélèvements à l'histologie, tu transformes la matière en diagnostic.
+          </div>
           
           <img src="assets/cassettes.png" alt="Cassettes d'inclusion" style="max-width:100%;border-radius:8px;border:2px solid var(--border);margin-bottom:15px">
           
@@ -135,19 +154,22 @@ const Level2 = (() => {
     select.value = ""; // reset
     if (!val) return;
 
-    const sequence = ["mesurer", "ouvrir", "decrire"];
+    const sequence = ["orienter", "mesurer", "ouvrir", "decrire"];
     const expected = sequence[macroPhase];
 
     if (val === expected) {
       select.disabled = true;
-      if (val === "mesurer") {
-        Game.toast('success', 'Étape 1 validée', "Très bien. Avant toute chose, on identifie, on pèse et on mesure la pièce.", 5);
+      if (val === "orienter") {
+        Game.toast('success', 'Étape 1 validée', "On commence par bien orienter la pièce.", 5);
+        orientPiece(select);
+      } else if (val === "mesurer") {
+        Game.toast('success', 'Étape 2 validée', "Très bien. On identifie, on mesure et on encre la pièce.", 5);
         measurePiece(select);
       } else if (val === "ouvrir") {
-        Game.toast('success', 'Étape 2 validée', "Exact. On ouvre la pièce anatomique (au scalpel/macrotome) pour exposer les plans profonds.", 5);
+        Game.toast('success', 'Étape 3 validée', "Exact. On ouvre la pièce anatomique pour exposer les plans profonds.", 5);
         openPiece(select);
       } else if (val === "decrire") {
-        Game.toast('success', 'Étape 3 validée', "Parfait. On repère et on décrit précisément les lésions observées.", 5);
+        Game.toast('success', 'Étape 4 validée', "Parfait. On repère et on décrit précisément les lésions observées.", 5);
         describePiece(select);
       }
     } else {
@@ -161,16 +183,154 @@ const Level2 = (() => {
     }
   }
 
+  function orientPiece(select) {
+    const student = document.getElementById('student-macroscopy');
+    const tableAnim = document.getElementById('table-anim');
+    const tableContainer = tableAnim.parentElement;
+
+    student.textContent = "🧭";
+    
+    // Hide standard texts temporarily
+    Array.from(tableContainer.children).forEach(child => {
+      if (child.id !== 'table-anim' && child.id !== 'student-action-select' && child.tagName !== 'BUTTON') {
+        if (child.style) child.style.display = 'none';
+      }
+    });
+    tableAnim.style.display = 'none';
+
+    // Create D&D game container
+    const dndContainer = document.createElement('div');
+    dndContainer.id = "dnd-container";
+    dndContainer.style.textAlign = "center";
+    dndContainer.innerHTML = `
+      <div style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:15px;line-height:1.5;background:rgba(56,189,248,0.1);padding:10px;border-radius:8px;border:1px solid rgba(56,189,248,0.3);text-align:left">
+        <strong style="color:var(--primary)">🧭 Orientation : Placez les étiquettes au bon endroit (Glisser-Déposer)</strong>
+        <div id="dnd-pedago-text" style="display:none;margin-top:10px;">
+          <ul style="margin:5px 0 0 15px;padding:0">
+            <li>L’apex présente souvent un aspect convexe et parfois des dystrophies bulleuses.</li>
+            <li>La face diaphragmatique présente un aspect concave.</li>
+            <li>Les scissures sont fréquemment repérées par des rangées d’agrafes.</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div style="display:flex;gap:10px;margin-bottom:20px;justify-content:center;flex-wrap:wrap">
+        <div class="dnd-draggable" style="padding:6px 12px; background:#0ea5e9; color:#ffffff; border-radius:6px; cursor:grab; font-size:0.85rem; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.1); user-select:none; z-index:10; position:relative;" draggable="true" ondragstart="Level2.dragStart(event)" id="lbl-apex">Apex</div>
+        <div class="dnd-draggable" style="padding:6px 12px; background:#0ea5e9; color:#ffffff; border-radius:6px; cursor:grab; font-size:0.85rem; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.1); user-select:none; z-index:10; position:relative;" draggable="true" ondragstart="Level2.dragStart(event)" id="lbl-hile">Hile</div>
+        <div class="dnd-draggable" style="padding:6px 12px; background:#0ea5e9; color:#ffffff; border-radius:6px; cursor:grab; font-size:0.85rem; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.1); user-select:none; z-index:10; position:relative;" draggable="true" ondragstart="Level2.dragStart(event)" id="lbl-plevre">Plèvre viscérale</div>
+        <div class="dnd-draggable" style="padding:6px 12px; background:#0ea5e9; color:#ffffff; border-radius:6px; cursor:grab; font-size:0.85rem; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.1); user-select:none; z-index:10; position:relative;" draggable="true" ondragstart="Level2.dragStart(event)" id="lbl-parenchyme">Parenchyme pulmonaire</div>
+      </div>
+
+      <div style="position:relative;width:100%;max-width:300px;height:350px;margin:0 auto;background:#f8fafc;border-radius:20px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center">
+        <!-- SVG Lung Schema -->
+        <svg viewBox="0 0 100 120" style="width:90%;height:90%;fill:#fecaca;stroke:#f87171;stroke-width:2">
+          <path d="M 50 10 C 20 10, 10 50, 20 90 C 25 110, 70 110, 80 80 C 90 50, 70 10, 50 10 Z"/>
+          <!-- Hile details -->
+          <circle cx="70" cy="50" r="5" fill="#64748b" stroke="none"/>
+          <circle cx="70" cy="65" r="4" fill="#ef4444" stroke="none"/>
+          <circle cx="80" cy="55" r="4" fill="#3b82f6" stroke="none"/>
+        </svg>
+
+        <!-- Drop zones -->
+        <div class="dnd-dropzone" ondragover="Level2.dragOver(event)" ondragleave="Level2.dragLeave(event)" ondrop="Level2.drop(event, 'lbl-apex')" style="position:absolute;top:2%;left:50%;transform:translateX(-50%);width:80px;height:35px"></div>
+        
+        <div class="dnd-dropzone" ondragover="Level2.dragOver(event)" ondragleave="Level2.dragLeave(event)" ondrop="Level2.drop(event, 'lbl-hile')" style="position:absolute;top:40%;right:2%;width:70px;height:50px"></div>
+        
+        <div class="dnd-dropzone" ondragover="Level2.dragOver(event)" ondragleave="Level2.dragLeave(event)" ondrop="Level2.drop(event, 'lbl-plevre')" style="position:absolute;bottom:5%;left:15%;width:90px;height:40px"></div>
+        
+        <div class="dnd-dropzone" ondragover="Level2.dragOver(event)" ondragleave="Level2.dragLeave(event)" ondrop="Level2.drop(event, 'lbl-parenchyme')" style="position:absolute;top:40%;left:25%;width:90px;height:50px"></div>
+      </div>
+      <div id="dnd-success-msg" style="display:none;color:var(--success);font-weight:bold;margin-top:15px;font-size:1.1rem;animation:pulse 1s infinite">✅ Orientation réussie !</div>
+    `;
+
+    if (!document.getElementById('dnd-styles')) {
+      const style = document.createElement('style');
+      style.id = "dnd-styles";
+      style.innerHTML = `
+        .dnd-draggable:active { cursor:grabbing !important; }
+        .dnd-draggable.placed { background:transparent !important; color:var(--text-primary) !important; box-shadow:none !important; padding:2px !important; font-size:0.75rem !important; pointer-events:none; text-shadow:0 0 3px white; font-weight:900 !important; }
+        .dnd-dropzone { border:2px dashed rgba(0,0,0,0.3); border-radius:8px; background:rgba(255,255,255,0.6); display:flex; align-items:center; justify-content:center; }
+        .dnd-dropzone.drag-over { background:rgba(16,185,129,0.3); border-color:var(--success); }
+        .dnd-dropzone.filled { border:none; background:transparent; }
+      `;
+      document.head.appendChild(style);
+    }
+
+    tableContainer.insertBefore(dndContainer, document.getElementById('description-form'));
+
+    Level2.currentSelect = select;
+    Level2.placedLabels = 0;
+  }
+
+  function dragStart(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+  function dragOver(ev) { ev.preventDefault(); ev.currentTarget.classList.add('drag-over'); }
+  function dragLeave(ev) { ev.currentTarget.classList.remove('drag-over'); }
+  
+  function drop(ev, expectedId) {
+    ev.preventDefault();
+    ev.currentTarget.classList.remove('drag-over');
+    var data = ev.dataTransfer.getData("text");
+    
+    if (data === expectedId) {
+      const draggedEl = document.getElementById(data);
+      draggedEl.classList.add('placed');
+      
+      ev.currentTarget.classList.add('filled');
+      ev.currentTarget.innerHTML = "";
+      ev.currentTarget.appendChild(draggedEl);
+      
+      Level2.placedLabels++;
+      
+      if (Level2.placedLabels === 4) {
+        document.getElementById('dnd-success-msg').style.display = 'block';
+        document.getElementById('dnd-pedago-text').style.display = 'block'; // Show pedagogical text
+        
+        // Mettre en évidence les règles d'orientation apprises
+        Game.toast('success', 'Orientation validée', 'Lisez bien les points de repère avant de continuer.', 10);
+        
+        // Add continue button
+        const continueBtn = document.createElement('button');
+        continueBtn.className = "btn btn-primary";
+        continueBtn.style.marginTop = "15px";
+        continueBtn.innerHTML = "Continuer →";
+        continueBtn.onclick = () => {
+          document.getElementById('dnd-container').style.display = 'none';
+          document.getElementById('table-anim').style.display = 'block';
+          
+          const tableContainer = document.getElementById('table-anim').parentElement;
+          Array.from(tableContainer.children).forEach(child => {
+            if (child.id === 'table-measurements') child.style.display = 'inline-block';
+            else if (child.tagName === 'DIV' && !child.id.includes('form') && !child.id.includes('details') && child.id !== 'dnd-container') {
+              child.style.display = 'block';
+            }
+          });
+          
+          macroPhase = 1;
+          Level2.currentSelect.disabled = false;
+          Level2.currentSelect.focus();
+          document.getElementById('senior-dialogue').innerHTML = "<strong><img src='assets/doc_senior1.png' alt='Senior' style='width:22px;height:22px;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;margin-right:6px;border:1.5px solid #38bdf8;'> Dr. Pathologiste (Senior) :</strong><br>« L'orientation est juste. Maintenant, que faisons-nous sur cette pièce orientée ? »";
+          
+          Game.addScore(20, LEVEL_NUM);
+        };
+        
+        document.getElementById('dnd-container').appendChild(continueBtn);
+      }
+    } else {
+      Game.toast('error', "Erreur d'orientation", 'Mauvais emplacement pour cette étiquette.', -5);
+      Game.addPenalty(5, LEVEL_NUM);
+    }
+  }
+
   function measurePiece(select) {
     const student = document.getElementById('student-macroscopy');
     const tableAnim = document.getElementById('table-anim');
     const measurements = document.getElementById('table-measurements');
     const d = GAME_DATA.level2;
 
-    student.textContent = "🧑‍🎓📏";
+    student.textContent = "📏";
     
     setTimeout(() => {
-      student.textContent = "🧑‍🎓";
+      student.textContent = "";
       tableAnim.innerHTML = "⚖️ 🫁 📏";
       tableAnim.style.transform = "scale(1.1)";
       
@@ -180,10 +340,10 @@ const Level2 = (() => {
         measurements.style.background = "var(--primary-dark)";
         measurements.style.color = "#fff";
         
-        macroPhase = 1;
+        macroPhase = 2;
         select.disabled = false;
         select.focus();
-        document.getElementById('senior-dialogue').innerHTML = `<strong>👨‍⚕️ Dr. Pathologiste :</strong> "Très bien. Maintenant que nous avons le poids et les dimensions, il nous faut exposer la tumeur. Quelle est la prochaine étape ?"`;
+        document.getElementById('senior-dialogue').innerHTML = `<strong><img src='assets/doc_senior1.png' alt='Senior' style='width:22px;height:22px;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;margin-right:6px;border:1.5px solid #38bdf8;'> Dr. Pathologiste (Senior) :</strong><br>« Très bien. Maintenant que nous avons le poids et les dimensions, il nous faut exposer la tumeur. Quelle est la prochaine étape ? »`;
       }, 600);
     }, 600);
   }
@@ -192,10 +352,10 @@ const Level2 = (() => {
     const student = document.getElementById('student-macroscopy');
     const tableAnim = document.getElementById('table-anim');
 
-    student.textContent = "🧑‍🎓🔪";
+    student.textContent = "🔪";
     
     setTimeout(() => {
-      student.textContent = "🧑‍🎓";
+      student.textContent = "";
       tableAnim.innerHTML = "🫁 🫁 🫁";
       tableAnim.style.transform = "scale(1.2)";
       tableAnim.style.textShadow = "0 0 10px rgba(239,68,68,0.5)";
@@ -204,10 +364,10 @@ const Level2 = (() => {
         tableAnim.style.transform = "scale(1)";
         tableAnim.style.textShadow = "none";
         
-        macroPhase = 2;
+        macroPhase = 3;
         select.disabled = false;
         select.focus();
-        document.getElementById('senior-dialogue').innerHTML = `<strong>👨‍⚕️ Dr. Pathologiste :</strong> "Parfait. Tes coupes sont nettes. Décris-moi ces lésions, évalue leurs rapports tumoraux et mesure bien tes distances aux marges."`;
+        document.getElementById('senior-dialogue').innerHTML = `<strong><img src='assets/doc_senior1.png' alt='Senior' style='width:22px;height:22px;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;margin-right:6px;border:1.5px solid #38bdf8;'> Dr. Pathologiste (Senior) :</strong><br>« Parfait. Tes coupes sont nettes. Décris-moi ces lésions, évalue leurs rapports tumoraux et mesure bien tes distances aux marges. »`;
       }, 600);
     }, 600);
   }
@@ -216,7 +376,7 @@ const Level2 = (() => {
     const student = document.getElementById('student-macroscopy');
     const form = document.getElementById('description-form');
 
-    student.textContent = "🧑‍🎓✍️";
+    student.textContent = "✍️";
     
     setTimeout(() => {
       form.style.display = "block";
@@ -266,12 +426,12 @@ const Level2 = (() => {
     details.style.opacity = "1";
     
     const student = document.getElementById('student-macroscopy');
-    student.textContent = "🧑‍🎓";
+    student.textContent = "";
 
     // Enable next action
     document.getElementById('action-selector').style.display = 'none';
     document.getElementById('btn-prelever').style.display = 'block';
-    document.getElementById('senior-dialogue').innerHTML = `<strong>👨‍⚕️ Dr. Pathologiste :</strong> "Bonne analyse, ton plan macroscopique est formellement établi. À ton tour, sélectionne les zones cruciales à prélever sur la pièce."`;
+    document.getElementById('senior-dialogue').innerHTML = `<strong><img src='assets/doc_senior1.png' alt='Senior' style='width:22px;height:22px;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;margin-right:6px;border:1.5px solid #38bdf8;'> Dr. Pathologiste (Senior) :</strong><br>« Ton plan macroscopique est validé. À toi de jouer. Identifie et prélève les zones stratégiques. Un bloc inutile encombre le labo, mais un bloc oublié fausse le diagnostic. Sois sélectif et précis. »`;
   }
 
   function askPrelevements() {
@@ -280,7 +440,7 @@ const Level2 = (() => {
     const form = document.getElementById('prelevement-form');
     
     btn.style.display = 'none';
-    student.textContent = "🧑‍🎓💭";
+    student.textContent = "💭";
     
     form.style.display = 'block';
     document.getElementById('student-prelevement').focus();
@@ -333,12 +493,12 @@ const Level2 = (() => {
     const student = document.getElementById('student-macroscopy');
     const interactive = document.getElementById('macro-interactive-section');
     
-    student.textContent = "🧑‍🎓🎯";
+    student.textContent = "🎯";
     
     interactive.style.opacity = "1";
     interactive.style.pointerEvents = "auto";
     
-    document.getElementById('senior-dialogue').innerHTML = `<strong>👨‍⚕️ Dr. Pathologiste :</strong> "Le plan théorique est validé. Voici sur la table le résultat de ton travail : les blocs sont numérotés et placés dans des cassettes ! Tu peux maintenant valider pour envoyer le tout au laboratoire d'histologie."`;
+    document.getElementById('senior-dialogue').innerHTML = `<strong><img src='assets/doc_senior1.png' alt='Senior' style='width:22px;height:22px;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;margin-right:6px;border:1.5px solid #38bdf8;'> Dr. Pathologiste (Senior) :</strong><br>« Ton plan macroscopique est validé. À toi de jouer. Identifie et prélève les zones stratégiques. Un bloc inutile encombre le labo, mais un bloc oublié fausse le diagnostic. Sois sélectif et précis. »`;
   }
 
   function valider() {
@@ -356,8 +516,10 @@ const Level2 = (() => {
       <div style="background:var(--bg-card);border:1px solid rgba(16,185,129,0.3);border-radius:var(--radius-lg);padding:28px">
         <div style="font-size:1rem;font-weight:700;color:var(--success);margin-bottom:12px">✅ Excellent ! La macroscopie est complète.</div>
         <div style="font-size:0.86rem;color:var(--text-secondary);line-height:1.7;margin-bottom:20px">
-          <strong style="color:var(--text-primary)">🎓 Point pédagogique :</strong> La qualité de l'examen macroscopique conditionne directement la pertinence du diagnostic histologique. 
-          Les cassettes numérotées sont prêtes — elles vont suivre tout un traitement tissulaire (fixation, déshydratation, inclusion en paraffine) au laboratoire.
+          <strong style="color:var(--text-primary)">🎓 Point pédagogique : La Macroscopie, fondement du diagnostic</strong><br>
+          <span style="color:var(--primary); font-style:italic;">« Gardez ceci à l'esprit : le microscope ne corrige jamais les oublis de la macroscopie. »</span><br>
+          La qualité de l'examen macroscopique conditionne directement la pertinence du diagnostic histologique.<br>
+          Les cassettes numérotées sont prêtes. Elles quittent maintenant vos mains pour subir différentes étapes techniques.
         </div>
         <button class="btn btn-primary btn-lg" onclick="Game.nextLevel()">
           Niveau 3 : Traitement technique →
@@ -370,5 +532,5 @@ const Level2 = (() => {
     document.getElementById('btn-valider-macro').style.display = 'none';
   }
 
-  return { init, valider, requestAction, measurePiece, openPiece, describePiece, submitDescription, askPrelevements, submitPrelevementQuestion, unlockPrelevements };
+  return { init, valider, requestAction, measurePiece, openPiece, describePiece, submitDescription, askPrelevements, submitPrelevementQuestion, unlockPrelevements, dragStart, dragOver, dragLeave, drop, placedLabels: 0, currentSelect: null };
 })();

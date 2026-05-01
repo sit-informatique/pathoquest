@@ -449,9 +449,12 @@ body:has(#screen-admin.active) #hud {
 
 .level-desc {
   color: var(--text-secondary);
-  font-size: 0.93rem;
+  font-size: 1.05rem;
+  font-weight: 500;
   line-height: 1.65;
-  max-width: 560px;
+  max-width: 600px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .level-pts {

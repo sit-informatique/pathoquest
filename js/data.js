@@ -14,20 +14,24 @@ const GAME_DATA = {
     maxScore: 150,
 
     checklist: [
-      { id: "cl_cons_fixateur", category: "conservation", text: "Présence de fixateur (pas à sec)", required: true },
-      { id: "cl_cons_nature", category: "conservation", text: "Nature du fixateur (Formol 10%)", required: true },
-      { id: "cl_cons_volume", category: "conservation", text: "Volume de fixateur ≥ 10-20 fois le volume de la pièce", required: true },
+      { id: "cl_cons_fix", category: "conservation", text: "<b>Présence d'un fixateur :</b> Vérifier que la pièce n'est pas reçue à sec (risque d'autolyse irréversible des tissus).", required: true },
+      { id: "cl_cons_nat", category: "conservation", text: "<b>Nature du fixateur :</b> Confirmer l'usage du Formol neutre tamponné à 10% (seul fixateur standard pour l'histologie).", required: true },
+      { id: "cl_cons_vol", category: "conservation", text: "<b>Volume du fixateur :</b> Le liquide recouvre-t-il entièrement la pièce ? (Règle : volume ≥ 10 fois le volume du prélèvement).", required: true },
+      { id: "cl_cons_recip", category: "conservation", text: "<b>Récipient adapté :</b> Utilisation d'un flacon à large ouverture.", required: true },
+      { id: "cl_cons_etanche", category: "conservation", text: "<b>Étanchéité du récipient :</b> S'assurer de l'absence de fuite de liquide biologique ou de vapeurs toxiques de formol.", required: true },
+      { id: "cl_cons_delai", category: "conservation", text: "<b>Délai d'acheminement :</b> Vérifier le respect du temps d'ischémie froide (délai entre exérèse et fixation le plus court possible).", required: true },
       
-      { id: "cl_trans_etanche", category: "transport", text: "Étanchéité du récipient de transport", required: true },
-      { id: "cl_trans_delai", category: "transport", text: "Respect du délai d'acheminement (ischémie froide)", required: true },
+      { id: "cl_etiq_nom", category: "etiquetage", text: "<b>Vérifier nom et prénom</b> sur l'étiquette du flacon.", required: true },
+      { id: "cl_etiq_siege", category: "etiquetage", text: "<b>Siège et latéralité :</b> Vérifier que le côté (droit ou gauche) et le lobe spécifique sont mentionnés.", required: true },
+      { id: "cl_etiq_pres", category: "etiquetage", text: "<b>Identification du prescripteur :</b> nom et coordonnées du préleveur.", required: true },
       
-      { id: "cl_et_identite", category: "etiquetage", text: "Concordance Nom/Prénom sur l'étiquette", required: true },
-      { id: "cl_et_siege", category: "etiquetage", text: "Siège et latéralité précisés sur le flacon", required: true },
-      { id: "cl_et_prescripteur", category: "etiquetage", text: "Identification claire du prescripteur", required: true },
+      { id: "cl_dem_cliniq", category: "demande", text: "<b>Renseignements cliniques :</b> Motif de l'exérèse, antécédents pertinents, données d'imagerie (taille de la lésion).", required: true },
+      { id: "cl_dem_pres", category: "demande", text: "<b>Identification du prescripteur :</b> nom et coordonnées du préleveur.", required: true },
+      { id: "cl_dem_date", category: "demande", text: "<b>Date et heure de prélèvement</b> notées.", required: true },
+      { id: "cl_dem_nature", category: "demande", text: "<b>Nature et siège</b> du prélèvement précisés.", required: true },
       
-      { id: "cl_fd_motif", category: "demande", text: "Présence du motif d'exérèse et renseignements cliniques", required: true },
-      { id: "cl_fd_atcd", category: "demande", text: "Antécédents et données d'imagerie mentionnés", required: true },
-      { id: "cl_fd_date", category: "demande", text: "Date et heure du prélèvement renseignées", required: true }
+      { id: "cl_conc_parfaite", category: "concordance", text: "<b>Concordance parfaite</b> entre la fiche de demande et l’étiquette du flacon.", required: true },
+      { id: "cl_conc_discordance", category: "concordance", text: "<b>Discordance</b> entre la fiche de demande et l’étiquette du flacon.", required: true }
     ],
 
     scenario: {
@@ -45,66 +49,87 @@ const GAME_DATA = {
 
     anomalies: [
       {
+        id: "an_cons_inapproprie",
+        categorie: "conservation",
+        critical: false,
+        label: "Fixateur inapproprié (Utilisation d'alcool, d'eau ou de liquide physiologique au lieu du formol)."
+      },
+      {
         id: "an_vol_insuffisant",
         categorie: "conservation",
         critical: false,
-        label: "Volume de fixateur insuffisant (Conservation)",
-        explication: "Le volume de formol est nettement inférieur au ratio recommandé (10:1), risquant une autolyse du centre de la pièce.",
-        penalite: -10
+        label: "Volume de fixateur insuffisant (Ratio < 20 fois le volume de la pièce)."
       },
       {
-        id: "an_absence_heure",
+        id: "an_cons_recipient",
+        categorie: "conservation",
+        critical: false,
+        label: "Récipient inadapté (Ouverture trop étroite pour l'extraction de la pièce fixée/ flacon trop petit)."
+      },
+      {
+        id: "an_cons_etancheite",
+        categorie: "conservation",
+        critical: false,
+        label: "Défaut d'étanchéité (Fuite constatée ou odeur de formol suspecte)."
+      },
+      {
+        id: "an_id_etiquetage",
         categorie: "identitovigilance",
         critical: false,
-        label: "Absence d'heure de prélèvement (Clinique)",
-        explication: "L'absence d'heure empêche le calcul précis de l'ischémie froide et du temps de fixation.",
-        penalite: -10
+        label: "Étiquetage illisible ou absent sur le flacon."
       },
       {
         id: "an_renseignements_vagues",
         categorie: "identitovigilance",
         critical: false,
-        label: "Renseignements cliniques lacunaires",
-        explication: "Le manque de données d'imagerie et d'antécédents précis complique l'interprétation histologique.",
-        penalite: -10
+        label: "Absence de renseignements cliniques (Motif d'examen ou antécédents manquants)."
+      },
+      {
+        id: "an_id_prescripteur",
+        categorie: "identitovigilance",
+        critical: false,
+        label: "Absence d'identification du prescripteur (Impossible de joindre le chirurgien)."
+      },
+      {
+        id: "an_absence_heure",
+        categorie: "identitovigilance",
+        critical: false,
+        label: "Absence de la date et l’heure de l’intervention."
       }
     ],
 
     anomalies_critiques: [
       {
-        id: "anc_erreur_lateralite",
-        categorie: "identitovigilance",
-        label: "Erreur de latéralité ou de siège (Discordance)",
-        explication: "Une discordance sur le siège (ex: droite vs gauche) est une erreur critique d'identitovigilance nécessitant un refus immédiat.",
-        penalite: -50
-      },
-      {
         id: "anc_absence_fixateur",
         categorie: "conservation",
-        label: "Absence totale de fixateur (Prélèvement à sec)",
-        explication: "Un prélèvement reçu à sec sans fixateur subit une dégradation irréversible des tissus.",
-        penalite: -50
+        critical: true,
+        label: "Absence de fixateur (Pièce reçue à sec)."
       },
       {
         id: "anc_discordance_identite",
         categorie: "identitovigilance",
-        label: "Discordance d'identité (Fiche vs Flacon)",
-        explication: "Toute incertitude sur l'identité du patient est un critère de refus absolu pour la sécurité du patient.",
-        penalite: -50
+        critical: true,
+        label: "Discordance d'identité (Nom ou prénom différent entre le bon et le flacon)."
+      },
+      {
+        id: "anc_erreur_lateralite",
+        categorie: "identitovigilance",
+        critical: true,
+        label: "Erreur de latéralité/siège (Ex: \"Poumon Droit\" sur le bon vs \"Poumon Gauche\" sur le flacon)."
       }
     ],
 
-    feedback_accept: "✅ Prélèvement accepté avec réserves. Les non-conformités mineures ont été documentées sur fiche de non-conformité. Le biologiste a été informé.",
+    feedback_accept: "✅ Prélèvement accepté avec réserves. Les non-conformités mineures ont été documentées sur fiche de non-conformité. Le chirurgien a été informé.",
     feedback_reject: "❌ Prélèvement refusé pour non-conformité critique. Le médecin prescripteur a été contacté et un nouveau prélèvement sera demandé si possible.",
     feedback_parfait: "🏆 Excellent ! Toutes les vérifications ont été effectuées. La traçabilité pré-analytique est garantie."
   },
 
   // ── NIVEAU 2 : Macroscopie ───────────────────────────────────
   level2: {
-    title: "Examen Macroscopique",
+    title: "Examen Macroscopique : « L’œil du pathologiste »",
     icon: "🔬",
     lieu: "Salle de macroscopie",
-    description: "Examinez la pièce de lobectomie pulmonaire, décrivez la tumeur et sélectionnez les zones à prélever pour inclusion.",
+    description: "La conformité est validée. La pièce de lobectomie supérieure droite est sur votre paillasse de macroscopie. À ce stade, aucun microscope ne peut vous aider : seul votre regard et votre rigueur guideront vos décisions.<br><br><b>Votre mission :</b> Explorer la pièce opératoire et réaliser l’échantillonnage stratégique qui scellera le diagnostic histologique.<br><br><span style='color:var(--danger)'><b>Attention :</b></span> Un prélèvement oublié est une information perdue à jamais. Soyez méthodique.",
     maxScore: 200,
 
     description_macroscopique: {
@@ -178,7 +203,7 @@ const GAME_DATA = {
     description: "Remettez les étapes du traitement technique histologique dans le bon ordre par glisser-déposer.",
     maxScore: 150,
 
-    etapes_correctes: [1, 2, 3, 4, 5],
+    etapes_correctes: [1, 2, 3, 4, 5, 6],
 
     etapes: [
       {
@@ -195,8 +220,8 @@ const GAME_DATA = {
         ordre: 2,
         nom: "Déshydratation",
         emoji: "💧",
-        desc: "Bains d'alcools graduels (70°→ 95° → 100°) + xylène",
-        detail: "Élimine progressivement l'eau des tissus pour permettre l'imprégnation en paraffine (hydrophobe).",
+        desc: "Bains d'alcools croissants + solvant (xylène)",
+        detail: "Élimine progressivement l'eau des tissus via des bains d'alcools croissants. Indispensable pour permettre l'imprégnation par la paraffine qui est hydrophobe.",
         consequence_si_erreur: "Mauvaise imprégnation en paraffine, coupes de mauvaise qualité"
       },
       {
@@ -213,8 +238,8 @@ const GAME_DATA = {
         ordre: 4,
         nom: "Coupe au Microtome",
         emoji: "🔪",
-        desc: "Coupes en ruban de 3–5 μm d'épaisseur",
-        detail: "Le microtome rotatif sectionne le bloc en coupes ultra-fines déposées sur bain-marie puis recueillies sur lames silanisées.",
+        desc: "Coupes ultra-fines (3 à 5 microns)",
+        detail: "Le microtome sectionne le bloc en coupes ultra-fines (3 à 5 micron). Ces rubans sont étalés sur un bain-marie avant d'être recueillis sur des lames de verre.",
         consequence_si_erreur: "Coupes trop épaisses (superposition cellulaire), artefacts de compression"
       },
       {
@@ -222,9 +247,18 @@ const GAME_DATA = {
         ordre: 5,
         nom: "Coloration HE",
         emoji: "🎨",
-        desc: "Hématoxyline-Éosine : noyaux en violet, cytoplasmes en rose",
-        detail: "L'hématoxyline colore les noyaux en bleu/violet. L'éosine colore les cytoplasmes et le tissu conjonctif en rose. Standard universel de la pathologie.",
+        desc: "Hématoxyline (noyaux) et Éosine (cytoplasmes)",
+        detail: "L'hématoxyline colore les noyaux en bleu. L'éosine colore les cytoplasmes en rose. Standard universel de la pathologie.",
         consequence_si_erreur: "Mauvaise différenciation nucléaire/cytoplasmique, diagnostic impossible"
+      },
+      {
+        id: "e_montage",
+        ordre: 6,
+        nom: "Montage",
+        emoji: "🖼️",
+        desc: "Résine transparente et lamelle de verre",
+        detail: "Application d'une résine transparente et d'une lamelle de verre. Cette étape assure la protection définitive de la coupe et une clarté optique optimale sous l'objectif.",
+        consequence_si_erreur: "Dégradation de la coupe dans le temps, mauvaise qualité optique"
       }
     ],
 
@@ -235,84 +269,80 @@ const GAME_DATA = {
 
   // ── NIVEAU 4 : Microscopie ───────────────────────────────────
   level4: {
-    title: "Analyse Microscopique",
+    title: "Analyse Microscopique : La vérité tumorale",
     icon: "🔭",
     lieu: "Salle de lecture",
-    description: "Observez les lames histologiques et associez chaque image au bon diagnostic.",
+    description: "Les lames histologiques issues de la lobectomie pulmonaire ont été validées sur le plan technique. Vous êtes maintenant au cœur du diagnostic : l'analyse microscopique.<br><br><strong>👨‍⚕️ Dr. Pathologiste (Senior) :</strong><br>« Gardez l'œil ouvert : une seule cellule peut changer le stade de pT1 à pT4. Vous devez identifier la nature de la lésion, évaluer son agressivité et rechercher les critères essentiels au staging tumoral. »",
     maxScore: 250,
 
-    slides: [
-      {
-        id: "sl_adeno",
-        image: "assets/histo_adeno.png",
-        zone: "Tumeur principale — Obj. ×20",
-        grossissement: "×20",
-        diagnostic_correct: "Adénocarcinome pulmonaire",
-        type: "adénocarcinome",
-        criteres: [
-          "Architecture glandulaire (pattern acinaire prédominant)",
-          "Cellules cubiques avec noyaux vésiculeux et nucléoles proéminents",
-          "Mucosécrétion intracytoplasmique",
-          "Stroma desmoplastique",
-          "Invasion du parenchyme pulmonaire adjacent"
-        ],
-        malignite: [
-          "Pléomorphisme nucléaire important",
-          "Mitoses atypiques présentes",
-          "Nécrose tumorale focale",
-          "Invasion vasculaire et lymphatique"
-        ]
-      },
-      {
-        id: "sl_epidermo",
-        image: "assets/histo_epidermoide.png",
-        zone: "Nodule satellite — Obj. ×40",
-        grossissement: "×40",
-        diagnostic_correct: "Carcinome épidermoïde",
-        type: "épidermoïde",
-        criteres: [
-          "Nids et massifs cellulaires à différenciation malpighienne",
-          "Perles cornées (kératinisation)  caractéristiques",
-          "Ponts intercellulaires visibles",
-          "Cytoplasme abondant éosinophile",
-          "Noyaux hyperchromatiques irréguliers"
-        ],
-        malignite: [
-          "Invasion stromale franche",
-          "Mitoses nombreuses et atypiques",
-          "Anisocaryose marquée",
-          "Emboles lymphatiques"
-        ]
-      },
-      {
-        id: "sl_sain",
-        image: "assets/histo_sain.png",
-        zone: "Parenchyme sain à distance — Obj. ×10",
-        grossissement: "×10",
-        diagnostic_correct: "Parenchyme pulmonaire sain + Emphysème modéré",
-        type: "sain",
-        criteres: [
-          "Alvéoles à parois fines régulières",
-          "Pneumocytes de type I et II normaux",
-          "Capillaires alvéolaires ouverts",
-          "Absence de cellules atypiques",
-          "Distension alvéolaire de fond (emphysème centrolobulaire léger)"
-        ],
-        malignite: []
-      }
+    phase1: {
+      titre: "Phase 1 : Le balayage tactique (faible grossissement x4)",
+      objectif: "Reconnaissance du tissu tumoral",
+      consigne: "En vous appuyant sur cette vue à faible grossissement, citez les critères histologiques de malignité que vous devrez confirmer lors de la descente d'objectifs.",
+      memo: "A.A.N.M.P (Architecture, Atypies, Noyaux, Mitoses, Polarité)",
+      criteres: [
+        { id: "p1_c1", label: "Désorganisation architecturale", correct: true },
+        { id: "p1_c2", label: "Atypies cellulaires", correct: true },
+        { id: "p1_c3", label: "Noyaux hyperchromatiques", correct: true },
+        { id: "p1_c4", label: "Mitoses atypiques", correct: true },
+        { id: "p1_c5", label: "Perte de polarité", correct: true },
+        { id: "p1_c6", label: "Anisocytose, anisocaryose", correct: true },
+        { id: "p1_c7", label: "Fibrose régulière", correct: false },
+        { id: "p1_c8", label: "Nappes régulières ciliées", correct: false }
+      ]
+    },
+
+    phase2: {
+      titre: "Phase 2 : Le profilage cellulaire (Grossissement x20)",
+      objectif: "Identification du type histologique",
+      consigne1: "Analyse morphologique : En observant votre zone d'intérêt, identifiez le ou les critère(s) spécifique(s) présent(s) sur cette lame :",
+      morphologie: [
+        { id: "p2_m1", label: "Globe corné", correct: true },
+        { id: "p2_m2", label: "Structures glandulaires (lumières)", correct: false },
+        { id: "p2_m3", label: "Nappes de cellules indifférenciées", correct: false },
+        { id: "p2_m4", label: "Architecture organoïde (nids, palissades)", correct: false },
+        { id: "p2_m5", label: "Ponts intercellulaires / Kératinisation", correct: true },
+        { id: "p2_m6", label: "Phénomène de moulage ou d'écrasement nucléaire", correct: false }
+      ],
+      consigne2: "Synthèse diagnostique : Au vu de ces critères, quel est le type histologique dominant ?",
+      synthese: [
+        "Adénocarcinome pulmonaire",
+        "Carcinome épidermoïde",
+        "Carcinome à petites cellules",
+        "Carcinome à grandes cellules",
+        "Carcinoïde atypique",
+        "Carcinome neuroendocrine à grandes cellules"
+      ],
+      synthese_correcte: "Carcinome épidermoïde"
+    },
+
+    phase3: {
+      titre: "Phase 3 : La Traque des Critères TNM & Facteurs Pronostiques (x40)",
+      objectif: "Analyse de l'invasion tumorale",
+      intro: "Le diagnostic de carcinome épidermoïde est posé. Maintenant, vous devez identifier les signes d'extension locale et les facteurs de mauvais pronostic qui modifieront le pTNM.",
+      consigne: "Observez les champs microscopiques. Quels sont les deux signes d'agressivité formellement identifiés sur ces prélèvements ?",
+      agressivite: [
+        { id: "p3_a1", label: "Invasion pleurale", correct: true },
+        { id: "p3_a2", label: "Invasion bronchique", correct: false },
+        { id: "p3_a3", label: "STAS (Diffusion aérienne)", correct: false },
+        { id: "p3_a4", label: "Métastase ganglionnaire", correct: true },
+        { id: "p3_a5", label: "Emboles vasculaires", correct: false },
+        { id: "p3_a6", label: "Engainement péri-nerveux", correct: false }
+      ]
+    },
+
+    bilan_extension: [
+      { element: "Invasion Pleurale", resultat: "Présente (franchissement de la limitante élastique)", impact: "Classe le dossier en pT2 minimum" },
+      { element: "Invasion Bronchique", resultat: "Absente", impact: "Pas d'extension à la bronche souche" },
+      { element: "STAS (Diffusion aérienne)", resultat: "Présent", impact: "Facteur de risque élevé de récidive locale" },
+      { element: "Emboles Vasculaires", resultat: "Nombreux", impact: "Risque accru de métastases à distance" },
+      { element: "Engainements péri-nerveux", resultat: "Absents", impact: "-" },
+      { element: "Métastase ganglionnaire", resultat: "N1 (2 ganglions hilaires positifs sur 5)", impact: "Modifie le stade pN" }
     ],
 
-    diagnostics_choices: [
-      "Adénocarcinome pulmonaire",
-      "Carcinome épidermoïde",
-      "Carcinome à petites cellules",
-      "Carcinoïde typique",
-      "Parenchyme pulmonaire sain + Emphysème modéré",
-      "Métastase pulmonaire"
-    ],
-
-    message_succes: "🏆 Analyse microscopique excellente ! Vous avez correctement identifié tous les types tumoraux.",
-    message_partiel: "⚠️ Quelques erreurs diagnostiques. Relisez les critères histologiques pour mieux différencier adénocarcinome et carcinome épidermoïde — une distinction cruciale pour le choix thérapeutique."
+    point_pedagogique: "<b>La précision du diagnostic histologique n'est pas qu'une simple rigueur académique ; elle constitue le pilier fondamental de la médecine personnalisée.</b><br><br>Un diagnostic morphologique exact est l'étape décisive qui permet d'orienter sans délai :<ul><li style='margin-bottom:6px'><b>Le bilan moléculaire :</b> En sélectionnant les biomarqueurs pertinents (NGS, FISH) pour préserver le matériel tumoral.</li><li style='margin-bottom:6px'><b>La stratégie thérapeutique :</b> En dictant le choix entre thérapies ciblées, immunothérapies ou protocoles conventionnels.</li><li style='margin-bottom:6px'><b>Le pronostic :</b> En évaluant précisément l'agressivité et l'extension tumorale (Staging pTNM).</li></ul>",
+    
+    message_succes: "🏆 Analyse microscopique excellente ! Le diagnostic de Carcinome Épidermoïde avec ses facteurs pronostiques est validé."
   },
 
   // ── NIVEAU 5 : Compte Rendu ──────────────────────────────────
@@ -320,21 +350,14 @@ const GAME_DATA = {
     title: "Compte Rendu Anatomo-Pathologique",
     icon: "📋",
     lieu: "Validation finale",
-    description: "Rédigez le compte rendu structuré de lobectomie pulmonaire en remplissant tous les champs obligatoires.",
-    maxScore: 150,
+    description: "Rédigez le compte rendu structuré complet et établissez la classification pTNM définitive en vous appuyant sur la 9ème édition de l'IASLC.",
+    sous_titre: "Du microscope à la thérapeutique",
+    maxScore: 200,
 
-    reponses_correctes: {
-      type_histologique: "Adénocarcinome invasif",
-      pattern_predominant: "Acinaire",
-      taille_tumeur: "52",
-      grade: "Grade 2 (modérément différencié)",
-      marges: "Marges saines (R0) — distance ≥ 3cm",
-      plevre: "PL1 — Invasion de la plèvre viscérale élastique",
-      ganglions: "pN1 — 1 ganglion hilaire envahi / 3 prélevés",
-      pt: "pT2a",
-      pn: "pN1",
-      pm: "pM0",
-      stade: "Stade IIB"
+    patient: {
+      nom: "Tounsi Ben Tounsi",
+      prelevement: "LSD — Lobe Supérieur Droit",
+      medecin: "Dr Meziane"
     },
 
     fields: [
@@ -342,64 +365,55 @@ const GAME_DATA = {
         id: "type_histologique",
         label: "Type histologique",
         type: "select",
-        options: ["--", "Adénocarcinome invasif", "Carcinome épidermoïde", "Carcinome à petites cellules", "Carcinoïde typique", "Carcinome adénosquameux"],
-        correct: "Adénocarcinome invasif",
-        points: 20
+        options: ["--", "Adénocarcinome pulmonaire", "Carcinome épidermoïde", "Carcinome à petites cellules", "Carcinome à grandes cellules", "Carcinoïde atypique", "Carcinome neuroendocrine à grandes cellules"],
+        correct: "Carcinome épidermoïde",
+        points: 30
       },
       {
-        id: "pattern_predominant",
+        id: "pattern_architectural",
         label: "Pattern architectural prédominant",
         type: "select",
-        options: ["--", "Acinaire", "Papillaire", "Micropapillaire", "Lépidique", "Solide"],
-        correct: "Acinaire",
-        points: 15
-      },
-      {
-        id: "taille_tumeur",
-        label: "Taille maximale de la tumeur (mm)",
-        type: "input",
-        placeholder: "ex: 52",
-        correct: "52",
-        points: 15
-      },
-      {
-        id: "grade",
-        label: "Grade histologique",
-        type: "select",
-        options: ["--", "Grade 1 (bien différencié)", "Grade 2 (modérément différencié)", "Grade 3 (peu différencié)"],
-        correct: "Grade 2 (modérément différencié)",
-        points: 15
-      },
-      {
-        id: "marges",
-        label: "Marges chirurgicales",
-        type: "select",
-        options: ["--", "Marges saines (R0) — distance ≥ 3cm", "Marges saines mais < 1mm (R0 limite)", "Marge envahie (R1)", "Non évaluables"],
-        correct: "Marges saines (R0) — distance ≥ 3cm",
-        points: 15
-      },
-      {
-        id: "plevre",
-        label: "Statut pleural viscéral",
-        type: "select",
-        options: ["--", "PL0 — Sans envahissement pleural", "PL1 — Invasion de la plèvre viscérale élastique", "PL2 — Invasion au-delà de la plèvre viscérale", "PL3 — Invasion de la plèvre pariétale"],
-        correct: "PL1 — Invasion de la plèvre viscérale élastique",
+        options: ["--", "Acinaire", "Papillaire", "Organoïde", "Lobulaire"],
+        correct: "Organoïde",
         points: 20
       },
       {
-        id: "ganglions",
-        label: "Statut ganglionnaire",
+        id: "taille_tumorale",
+        label: "Taille maximale de la tumeur (cm)",
+        type: "input",
+        placeholder: "ex: 5.2",
+        correct: "5.2",
+        points: 20
+      },
+      {
+        id: "differenciation",
+        label: "Différenciation",
         type: "select",
-        options: ["--", "pN0 — Aucun ganglion envahi", "pN1 — 1 ganglion hilaire envahi / 3 prélevés", "pN2 — Ganglions médiastinaux envahis", "pNx — Non évaluable"],
-        correct: "pN1 — 1 ganglion hilaire envahi / 3 prélevés",
+        options: ["--", "Bien différencié kératinisant", "Moyennement différencié", "Peu différencié"],
+        correct: "Bien différencié kératinisant",
+        points: 20
+      },
+      {
+        id: "marges_chirurgicales",
+        label: "Marges chirurgicales",
+        type: "select",
+        options: ["--", "Recoupe bronchique saine", "Recoupe bronchique tumorale"],
+        correct: "Recoupe bronchique saine",
         points: 20
       }
     ],
 
-    tnm_correct: { pT: "pT2a", pN: "pN1", pM: "pM0", stade: "IIB" },
+    ganglions_donnes: {
+      label: "Statut ganglionnaire (donné)",
+      valeur: "N1",
+      detail: "2 ganglions hilaires positifs sur 5 prélevés"
+    },
 
-    message_parfait: "🏆 Compte rendu parfait ! Votre CR est complet, structuré et cliniquement exploitable. Le chirurgien et l'oncologue pourront prendre une décision thérapeutique éclairée.",
-    message_acceptable: "✅ Compte rendu acceptable avec quelques imprécisions. Veillez à la précision des marges et du statut pleural — des informations clés pour la décision thérapeutique.",
-    message_insuffisant: "❌ Compte rendu insuffisant. Des éléments majeurs manquent ou sont erronés. Un CR incomplet peut conduire à une mauvaise prise en charge thérapeutique."
+    tnm_correct: { pT: "pT2b", pN: "pN1", pM: "pM0", stade: "IIB" },
+
+    message_parfait: "🏆 Félicitations, Docteur. Votre compte rendu est validé et le dossier peut maintenant passer en RCP (Réunion de Concertation Pluridisciplinaire) pour décider du traitement adjuvant.",
+    message_acceptable: "✅ Compte rendu acceptable avec quelques imprécisions. Vérifiez la différenciation et le pattern architectural — éléments clés pour la stratégie thérapeutique.",
+    message_insuffisant: "❌ Compte rendu insuffisant. Des éléments majeurs manquent ou sont erronés. Un CR incomplet peut conduire à une mauvaise prise en charge thérapeutique.",
+    message_pedagogique: "Le compte rendu anatomo-pathologique est le document médico-légal central qui oriente toutes les décisions thérapeutiques. Sa précision et son exhaustivité conditionnent directement la survie du patient."
   }
 };

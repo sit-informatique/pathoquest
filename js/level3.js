@@ -45,7 +45,7 @@ const Level3 = (() => {
 
           <!-- Zone cible -->
           <div class="dnd-column">
-            <div class="dnd-column-title">Ordre correct (1 → 5)</div>
+            <div class="dnd-column-title">Ordre correct (1 → 6)</div>
             <div class="dnd-zone" id="dnd-target"
                  ondragover="Level3.onDragOver(event,'target')"
                  ondrop="Level3.onDrop(event,'target')"
@@ -161,13 +161,13 @@ const Level3 = (() => {
       }
     }
 
-    // Activer le bouton si 5 cartes
+    // Activer le bouton si 6 cartes
     const btn = document.getElementById('btn-valider-tech');
     const hint = document.getElementById('tech-hint');
-    if (orderInZone.length === 5) {
+    if (orderInZone.length === 6) {
       if (hint) hint.textContent = 'Ordre défini — cliquez pour vérifier !';
     } else {
-      if (hint) hint.textContent = `${orderInZone.length}/5 étapes placées — vous pouvez valider à tout moment`;
+      if (hint) hint.textContent = `${orderInZone.length}/6 étapes placées — vous pouvez valider à tout moment`;
     }
 
     dragSrcId = null;
@@ -234,10 +234,10 @@ const Level3 = (() => {
 
     const btn = document.getElementById('btn-valider-tech');
     const hint = document.getElementById('tech-hint');
-    if (orderInZone.length === 5) {
+    if (orderInZone.length === 6) {
       if (hint) hint.textContent = 'Ordre défini — cliquez pour vérifier !';
     } else {
-      if (hint) hint.textContent = `${orderInZone.length}/5 étapes placées — vous pouvez valider à tout moment`;
+      if (hint) hint.textContent = `${orderInZone.length}/6 étapes placées — vous pouvez valider à tout moment`;
     }
   });
 
@@ -251,8 +251,8 @@ const Level3 = (() => {
     let allCorrect = true;
 
     // Si l'étudiant n'a placé aucune ou peu de cartes, pénalité maximale
-    if (orderInZone.length < 5) {
-      const missing = 5 - orderInZone.length;
+    if (orderInZone.length < 6) {
+      const missing = 6 - orderInZone.length;
       const penalty = missing * 20;
       Game.addPenalty(penalty, LEVEL_NUM);
       Game.toast('warning', 'Étapes manquantes', `${missing} étape(s) non placée(s). -${penalty} pts de pénalité.`, -penalty);
@@ -274,19 +274,19 @@ const Level3 = (() => {
     });
 
     let pts = 0;
-    if (orderInZone.length === 5 && allCorrect) {
+    if (orderInZone.length === 6 && allCorrect) {
       pts = d.maxScore;
       Game.toast('success', 'Ordre parfait !', d.message_succes, pts);
     } else {
-      pts = Math.round((correctCount / 5) * d.maxScore * 0.7);
-      if (orderInZone.length === 5) {
-        const penalty = (5 - correctCount) * 15;
+      pts = Math.round((correctCount / 6) * d.maxScore * 0.7);
+      if (orderInZone.length === 6) {
+        const penalty = (6 - correctCount) * 15;
         Game.addPenalty(penalty, LEVEL_NUM);
       }
     }
 
     Game.addScore(pts, LEVEL_NUM);
-    Game.setLevelPassed(LEVEL_NUM, allCorrect && orderInZone.length === 5);
+    Game.setLevelPassed(LEVEL_NUM, allCorrect && orderInZone.length === 6);
 
     const fb = document.getElementById('level3-feedback');
     const color = allCorrect ? 'var(--success)' : 'var(--warning)';
@@ -316,9 +316,18 @@ const Level3 = (() => {
         <div style="font-size:0.85rem;font-weight:600;color:var(--text-secondary);margin-bottom:12px">📚 Ordre correct et détails :</div>
         ${detailsHtml}
 
-        <div style="margin-top:24px; padding:16px; background:var(--bg-glass); border-left:4px solid var(--accent-cyan); border-radius:var(--radius-sm);">
-          <div style="font-weight:700; color:var(--text-primary); margin-bottom:8px;"><span class="card-icon">📌</span> Conclusion</div>
-          <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.6;margin:0;">${d.piege_description}</p>
+        <div style="margin-top:24px; padding:20px; background:var(--bg-glass); border-left:4px solid var(--success); border-radius:var(--radius-sm); border:1px solid rgba(16,185,129,0.2);">
+          <div style="font-size:1.05rem; font-weight:700; color:var(--success); margin-bottom:12px;">✅ Traitement terminé</div>
+          <p style="font-size:0.95rem; color:var(--text-primary); line-height:1.6; margin-bottom:16px; font-style:italic;">
+            « L’automate s'arrête et les lames sont stables : la coloration HE est optimale. Le terrain est préparé pour ton expertise.<br>
+            Prends une grande inspiration... nous passons à l'examen microscopique. »
+          </p>
+          <div style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:12px;">
+            <strong style="color:var(--text-primary);">🎓 Point pédagogique :</strong> La fixation est l'étape la plus critique du processus. En pathologie, on dit souvent que « le microscope ne peut pas guérir ce que le formol a raté ». Une mauvaise fixation initiale crée une cascade d'artefacts tout au long du traitement technique.
+          </div>
+          <div style="font-size:0.9rem; color:var(--danger); line-height:1.6; background:var(--danger-bg); padding:10px; border-radius:4px; border-left:3px solid var(--danger);">
+            <strong>⚠️ Règle d'or :</strong> La fixation est un contrat entre le clinicien et le pathologiste. Une fois le prélèvement hors du corps, chaque minute compte.
+          </div>
         </div>
 
         <div style="margin-top:20px">

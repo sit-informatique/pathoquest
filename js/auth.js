@@ -72,9 +72,11 @@ async function loadAdminList() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const btnLogin = document.getElementById('btn-login');
-  const btnRegister = document.getElementById('btn-register');
+// The script is loaded as type="module", so it executes after the DOM is parsed.
+// We can directly attach listeners without waiting for DOMContentLoaded.
+
+const btnLogin = document.getElementById('btn-login');
+const btnRegister = document.getElementById('btn-register');
   
   if (btnLogin) {
     btnLogin.addEventListener('click', async () => {
@@ -207,4 +209,3 @@ document.addEventListener('DOMContentLoaded', () => {
       location.reload(); // Refresh to stop the game state
     });
   }
-});

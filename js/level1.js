@@ -31,10 +31,10 @@ const Level1 = (() => {
 
     // Categories d'items checklist
     const cats = {
-      conservation: { label: "🧪 Conservation", items: [] },
-      transport:    { label: "🚚 Transport",    items: [] },
-      etiquetage:   { label: "🏷️ Étiquetage",    items: [] },
-      demande:      { label: "📄 Fiche de demande", items: [] }
+      conservation: { label: "🧪 Conservation & Transport", items: [] },
+      etiquetage:   { label: "🏷️ Étiquetage du flacon",    items: [] },
+      demande:      { label: "📄 Fiche de demande", items: [] },
+      concordance:  { label: "🔗 Concordance Fiche / Flacon", items: [] }
     };
     d.checklist.forEach(item => cats[item.category]?.items.push(item));
 
@@ -62,7 +62,7 @@ const Level1 = (() => {
       <!-- Checklist -->
       <div class="card">
         <div class="card-title"><span class="card-icon">✅</span> Étape 1 — Vérification des points de conformité</div>
-        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:20px">Observez attentivement les documents ci-dessus et cochez les points vérifiés.</p>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:20px">Examinez le flacon et la fiche de demande, puis cochez chaque point après vérification.</p>
         ${Object.values(cats).map(cat => `
           <div class="checklist-group">
             <div class="checklist-group-title">${cat.label}</div>
@@ -82,9 +82,9 @@ const Level1 = (() => {
       <!-- Décision -->
       <div class="card">
         <div class="card-title"><span class="card-icon">⚠️</span> Étape 2 — Signalement des Non-Conformités détectées</div>
-        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:20px">Identifiez les anomalies présentes dans ce dossier.</p>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:20px">Cochez la ou les anomalies identifiées lors de votre contrôle.</p>
 
-        <div class="checklist-group-title" style="color:var(--danger)">🔴 Anomalies de Conservation & Transport</div>
+        <div class="checklist-group-title" style="color:var(--danger)">❌ Anomalies de Conservation & Transport</div>
         <div class="anomaly-grid" style="margin-bottom:20px">
           ${d.anomalies.filter(a => a.categorie === 'conservation').map(a => `
             <div class="anomaly-option" id="am-${a.id}" onclick="Level1.toggleAnomalie('${a.id}')">
@@ -98,7 +98,7 @@ const Level1 = (() => {
           `).join('')}
         </div>
 
-        <div class="checklist-group-title" style="color:var(--info)">🔵 Anomalies d'Identitovigilance & Clinique</div>
+        <div class="checklist-group-title" style="color:var(--danger)">❌ Anomalies d'Identitovigilance & Clinique</div>
         <div class="anomaly-grid">
           ${d.anomalies.filter(a => a.categorie === 'identitovigilance').map(a => `
             <div class="anomaly-option" id="am-${a.id}" onclick="Level1.toggleAnomalie('${a.id}')">
@@ -133,8 +133,8 @@ const Level1 = (() => {
         <div style="display:flex;gap:20px;flex-wrap:wrap">
           <div class="card" style="flex:1;min-width:300px;text-align:center;margin-bottom:0" id="action-container-card">
             <h4 style="margin-bottom:15px;color:var(--text-primary)">1. Remplacement du Contenant</h4>
-            <div id="container-animation-area" style="height:120px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;margin-bottom:15px;background:var(--bg-lighter);border-radius:var(--radius-md);transition:all 0.5s">
-              <span id="anim-flask" style="transition:transform 0.3s">🫙</span> <span id="anim-liquid" style="font-size:1.5rem;margin-left:10px;transition:all 0.4s">💧</span>
+            <div id="container-animation-area" style="height:120px;display:flex;align-items:center;justify-content:center;margin-bottom:15px;background:var(--bg-lighter);border-radius:var(--radius-md);transition:all 0.5s;overflow:hidden">
+              <img id="anim-img" src="assets/vial_insufficient.png" style="max-height:100px; max-width:100%; transition:transform 0.4s ease, opacity 0.4s ease; object-fit:contain">
             </div>
             <button class="btn btn-primary" onclick="Level1.remplacerContenant()" id="btn-replace-container">
               🔄 Changer le flacon et ajouter du Formol
@@ -221,7 +221,7 @@ const Level1 = (() => {
     d.anomalies.forEach(a => {
       if (selectedAnomalies.has(a.id)) {
         pts += 10;
-        Game.toast('warning', 'Non-conformité signalée', `${a.label} — ${a.explication}`, 10);
+        Game.toast('warning', 'Non-conformité signalée', a.label, 10);
       }
     });
 
@@ -253,8 +253,7 @@ const Level1 = (() => {
 
   function remplacerContenant() {
     const area = document.getElementById('container-animation-area');
-    const flask = document.getElementById('anim-flask');
-    const liquid = document.getElementById('anim-liquid');
+    const img = document.getElementById('anim-img');
     const btn = document.getElementById('btn-replace-container');
     const status = document.getElementById('container-status');
 
@@ -263,17 +262,14 @@ const Level1 = (() => {
 
     // Animation sequence
     setTimeout(() => {
-      flask.style.transform = "scale(0)";
+      img.style.opacity = "0";
+      img.style.transform = "scale(0.8)";
       setTimeout(() => {
-        flask.textContent = "🪣"; // Grand flacon
-        flask.style.transform = "scale(1.2)";
+        img.src = "assets/formol.png";
         setTimeout(() => {
-          flask.style.transform = "scale(1)";
+          img.style.opacity = "1";
+          img.style.transform = "scale(1)";
           area.style.background = "rgba(16, 185, 129, 0.1)"; // vert léger
-          
-          liquid.textContent = "🌊"; // Formol ajouté
-          liquid.style.fontSize = "2.5rem";
-          liquid.style.transform = "translateY(-10px)";
           
           setTimeout(() => {
             btn.style.display = "none";
@@ -281,9 +277,9 @@ const Level1 = (() => {
             containerReplaced = true;
             checkFinalizeBtn();
           }, 600);
-        }, 400);
-      }, 300);
-    }, 300);
+        }, 150);
+      }, 400);
+    }, 200);
   }
 
   function contacterChirurgien() {
@@ -381,8 +377,7 @@ const Level1 = (() => {
       <div style="background:var(--bg-card);border:1px solid ${borderColor};border-radius:var(--radius-lg);padding:28px;">
         <div style="font-size:1.1rem;font-weight:700;color:${color};margin-bottom:12px">${msg}</div>
         <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.7;margin-bottom:20px">
-          <strong style="color:var(--text-primary)">🎓 Point pédagogique :</strong> La phase pré-analytique est la source de plus de 70% des erreurs diagnostiques. 
-          Le prélèvement est unique et irremplaçable. Un prélèvement mal fixé ou mal identifié peut rendre impossible tout diagnostic fiable.
+          <strong style="color:var(--text-primary)">🎓 Point pédagogique :</strong> La phase pré-analytique constitue l'étape la plus critique du circuit de soin en anatomie pathologique, car on estime que plus de 70 % des erreurs diagnostiques y trouvent leur origine. Une erreur d’identitovigilance ou une mauvaise fixation (délai trop long, manque de formol) peut altérer définitivement le tissu, rendant le diagnostic morphologique et les analyses moléculaires impossibles. En anatomie patholgique, le prélèvement est unique et irremplaçable ; sa conformité est le premier garant de la sécurité du patient.
         </div>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
           <button class="btn btn-primary btn-lg" onclick="Game.nextLevel()">
