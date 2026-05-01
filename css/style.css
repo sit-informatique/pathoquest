@@ -1475,3 +1475,70 @@ select option {
     background: rgba(255,255,255,0.2);
 }
 
+
+/* ═══════════════════════════════════════════════════════════
+   BRIEFING & QUIZ
+══════════════════════════════════════════════════════════════ */
+.briefing-container {
+  color: var(--text-primary);
+}
+
+#screen-briefing {
+  display: none;
+  background: var(--bg-deep);
+  overflow-y: auto;
+}
+
+#screen-briefing.active {
+  display: flex;
+}
+
+.quiz-opt {
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-glass);
+  border-radius: var(--r-md);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.quiz-opt:hover:not(:disabled) {
+  border-color: var(--cyan);
+  background: var(--cyan-dim);
+  transform: translateX(6px);
+}
+
+.quiz-opt:disabled {
+  cursor: default;
+  opacity: 1; /* On garde l'opacité pour le feedback */
+}
+
+#course-content ul, #course-content ol {
+  margin-left: 20px;
+  margin-top: 10px;
+}
+
+#course-content li {
+  margin-bottom: 8px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Responsive Briefing */
+@media (max-width: 768px) {
+  .briefing-container { margin: 10px; padding: 10px; }
+  #course-content { padding: 15px; font-size: 0.95rem; }
+}

@@ -587,6 +587,51 @@
       </div>
     </div>
 
+    <!-- ── ÉCRAN BRIEFING & RÉVISION ────────────────────────── -->
+    <div id="screen-briefing" class="screen">
+      <div class="briefing-container" style="max-width:900px;margin:40px auto;padding:20px;z-index:100;position:relative;">
+        
+        <div id="briefing-intro" style="text-align:center; animation:fadeIn 0.8s ease-out">
+          <div style="font-size:4rem;margin-bottom:20px">📚</div>
+          <h2 style="color:var(--cyan);font-weight:900;font-size:2.2rem;margin-bottom:15px">Cours de préparation</h2>
+          <p style="color:var(--text-secondary);font-size:1.1rem;line-height:1.6;margin-bottom:30px">
+            Bienvenue, futur pathologiste. Avant de commencer votre garde,<br>
+            prenons quelques instants pour réviser les fondamentaux des 5 étapes clés.
+          </p>
+          <button class="btn btn-primary btn-lg" onclick="Briefing.startCourse()" style="padding:15px 40px;font-size:1.1rem">Commencer la révision →</button>
+        </div>
+
+        <div id="briefing-course" style="display:none; animation:fadeIn 0.5s ease-out">
+          <div class="course-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;border-bottom:1px solid var(--border-glass);padding-bottom:15px">
+            <h3 id="course-step-title" style="color:var(--cyan);font-weight:800;margin:0">Étape 1 : Réception</h3>
+            <div id="course-progress" style="color:var(--text-muted);font-weight:bold;font-family:var(--font-mono)">1 / 5</div>
+          </div>
+          <div id="course-content" style="min-height:300px;background:rgba(255,255,255,0.03);padding:30px;border-radius:var(--r-md);margin-bottom:30px;line-height:1.8;color:var(--text-primary);font-size:1.05rem">
+            <!-- Injecté par JS -->
+          </div>
+          <div style="display:flex;justify-content:space-between">
+            <button class="btn btn-ghost" id="btn-course-prev" onclick="Briefing.prevStep()">← Précédent</button>
+            <button class="btn btn-primary" id="btn-course-next" onclick="Briefing.nextStep()">Continuer →</button>
+          </div>
+        </div>
+
+        <div id="briefing-quiz" style="display:none; animation:fadeIn 0.5s ease-out">
+          <div style="text-align:center;margin-bottom:30px">
+            <h3 style="color:var(--accent-cyan);font-weight:900;font-size:1.8rem">Petit Test de Contrôle ✍️</h3>
+            <p style="color:var(--text-secondary)">Validez vos connaissances pour débloquer l'accès au laboratoire.</p>
+          </div>
+          <div id="quiz-question-container" style="background:var(--bg-lighter);padding:40px;border-radius:var(--r-lg);border:1px solid var(--border-glass);margin-bottom:30px">
+            <div id="quiz-question" style="font-size:1.2rem;font-weight:bold;margin-bottom:25px;color:white"></div>
+            <div id="quiz-options" style="display:grid;gap:12px">
+              <!-- Injecté par JS -->
+            </div>
+          </div>
+          <div id="quiz-feedback" style="text-align:center;min-height:30px;font-weight:bold;margin-top:20px"></div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- ── ÉCRAN ACCUEIL ──────────────────────────────────────── -->
     <div id="screen-home" class="screen">
       <div id="screen-home-inner" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 64px);padding:60px 24px;text-align:center">
@@ -817,6 +862,7 @@
   <script src="js/level3.js?v=29"></script>
   <script src="js/level4.js?v=29"></script>
   <script src="js/level5.js?v=29"></script>
+  <script src="js/briefing.js?v=1"></script>
 
   <script>
     // Initialisation au chargement
