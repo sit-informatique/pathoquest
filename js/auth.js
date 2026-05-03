@@ -102,9 +102,8 @@ const btnRegister = document.getElementById('btn-register');
         if (userDoc.exists() && userDoc.data().status === "approved") {
           // Student Access granted
           document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-          document.getElementById('screen-briefing').classList.add('active');
+          document.getElementById('screen-home').classList.add('active');
           Game.init(); // Réinitialiser l'HUD au login
-          if (typeof Briefing !== 'undefined') Briefing.init();
         } else {
           auth.signOut();
           document.getElementById('form-login-block').style.display='none'; 
@@ -178,10 +177,9 @@ const btnRegister = document.getElementById('btn-register');
 
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists() && userDoc.data().status === "approved") {
-          console.log("Étudiant approuvé. Redirection Briefing.");
+          console.log("Étudiant approuvé. Redirection Home.");
           document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-          document.getElementById('screen-briefing').classList.add('active');
-          if (typeof Briefing !== 'undefined') Briefing.init();
+          document.getElementById('screen-home').classList.add('active');
         } else {
           console.warn("Utilisateur non approuvé ou inconnu. Déconnexion.");
           auth.signOut();

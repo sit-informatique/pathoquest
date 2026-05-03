@@ -190,7 +190,8 @@ const ADMIN_EMAILS = ["nizartaboubi@gmail.com", "laboatfkamoun@gmail.com"];
 
 ---
 
-## 📝 Historique des sessions
+### Session 2026-05-03
+- **Annulation Test** : Suppression de l'écran "Briefing/Test" de préparation avant le niveau 1. Redirection de l'authentification directement vers l'accueil (`screen-home`).
 
 ### Session 2026-05-01 (Dernière)
 - **Correction image Dr Senior** : chemin `doc_senior.jpeg` → `doc_senior1.png`
