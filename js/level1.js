@@ -49,12 +49,12 @@ const Level1 = (() => {
 
       <!-- Aperçu Visuel -->
       <div class="asset-grid">
-        <div class="level-asset-card" onclick="Level1.showModal('assets/vial_insufficient.png')">
-          <img src="assets/vial_insufficient.png" class="level-asset-img" alt="Prélèvement reçu">
+        <div class="level-asset-card" onclick="Level1.showModal('assets/vial_insufficient_real.jpg')">
+          <img src="assets/vial_insufficient_real.jpg" class="level-asset-img" alt="Prélèvement reçu">
           <div class="asset-label"><span>🫙</span> Prélèvement reçu (cliquer pour zoomer)</div>
         </div>
-        <div class="level-asset-card" onclick="Level1.showModal('assets/request_form.png')">
-          <img src="assets/request_form.png" class="level-asset-img" alt="Fiche de demande">
+        <div class="level-asset-card" onclick="Level1.showModal('assets/request_form_real.jpg')">
+          <img src="assets/request_form_real.jpg" class="level-asset-img" alt="Fiche de demande">
           <div class="asset-label"><span>📋</span> Fiche de demande (cliquer pour zoomer)</div>
         </div>
       </div>
@@ -134,7 +134,7 @@ const Level1 = (() => {
           <div class="card" style="flex:1;min-width:300px;text-align:center;margin-bottom:0" id="action-container-card">
             <h4 style="margin-bottom:15px;color:var(--text-primary)">1. Remplacement du Contenant</h4>
             <div id="container-animation-area" style="height:120px;display:flex;align-items:center;justify-content:center;margin-bottom:15px;background:var(--bg-lighter);border-radius:var(--radius-md);transition:all 0.5s;overflow:hidden">
-              <img id="anim-img" src="assets/vial_insufficient.png" style="max-height:100px; max-width:100%; transition:transform 0.4s ease, opacity 0.4s ease; object-fit:contain">
+              <img id="anim-img" src="assets/vial_insufficient_real.jpg" style="max-height:100px; max-width:100%; transition:transform 0.4s ease, opacity 0.4s ease; object-fit:contain">
             </div>
             <button class="btn btn-primary" onclick="Level1.remplacerContenant()" id="btn-replace-container">
               🔄 Changer le flacon et ajouter du Formol

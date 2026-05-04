@@ -33,21 +33,11 @@ const Level4 = (() => {
         <div class="card-title"><span class="card-icon">1️⃣</span> ${d.phase1.titre}</div>
         <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:15px">${d.phase1.objectif}</p>
         
-        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px">
-          <div style="flex:1;min-width:250px">
-            <div style="width:100%;aspect-ratio:4/3;background:var(--bg-glass);border-radius:var(--r-md);border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;overflow:hidden">
-              <img src="assets/phase1_sain.jpg" style="width:100%;height:100%;object-fit:cover" alt="Parenchyme sain" onerror="this.style.display='none'">
-              <span style="position:absolute;color:var(--text-muted);font-size:0.85rem;z-index:-1">Image Phase 1 (Sain)</span>
-            </div>
-            <div style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:5px">Parenchyme sain (x4)</div>
-          </div>
-          <div style="flex:1;min-width:250px">
-            <div style="width:100%;aspect-ratio:4/3;background:var(--bg-glass);border-radius:var(--r-md);border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;overflow:hidden">
-              <img src="assets/phase1_tumoral.jpg" style="width:100%;height:100%;object-fit:cover" alt="Parenchyme tumoral" onerror="this.style.display='none'">
-              <span style="position:absolute;color:var(--text-muted);font-size:0.85rem;z-index:-1">Image Phase 1 (Tumoral)</span>
-            </div>
-            <div style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:5px">Parenchyme tumoral (x4)</div>
-          </div>
+        <div style="text-align:center;margin-bottom:20px;display:flex;justify-content:center">
+           <div style="width:100%;max-width:600px;aspect-ratio:4/3;background:var(--bg-glass);border-radius:var(--r-md);border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
+              <img src="assets/phase1_real.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="Parenchyme sain et tumoral (x4)" onerror="this.style.display='none'">
+              <span style="color:var(--text-muted);font-size:0.85rem">Image Phase 1 (x4)</span>
+           </div>
         </div>
 
         <p style="font-weight:700;font-size:0.9rem;margin-bottom:10px">${d.phase1.consigne}</p>
@@ -71,11 +61,21 @@ const Level4 = (() => {
         <div class="card-title"><span class="card-icon">2️⃣</span> ${d.phase2.titre}</div>
         <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:15px">${d.phase2.objectif}</p>
         
-        <div style="text-align:center;margin-bottom:20px;display:flex;justify-content:center">
-           <div style="width:100%;max-width:500px;aspect-ratio:4/3;background:var(--bg-glass);border-radius:var(--r-md);border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
-              <img src="assets/phase2.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="Carcinome épidermoïde x20" onerror="this.style.display='none'">
-              <span style="color:var(--text-muted);font-size:0.85rem">Image Phase 2 (x20)</span>
-           </div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px">
+          <div style="flex:1;min-width:250px">
+            <div style="width:100%;aspect-ratio:4/3;background:var(--bg-glass);border-radius:var(--r-md);border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
+              <img src="assets/phase1_sain.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="Parenchyme sain" onerror="this.style.display='none'">
+              <span style="position:absolute;color:var(--text-muted);font-size:0.85rem;z-index:-1">Image Phase 2 (Sain)</span>
+            </div>
+            <div style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:5px">Parenchyme sain (x20)</div>
+          </div>
+          <div style="flex:1;min-width:250px">
+            <div style="width:100%;aspect-ratio:4/3;background:var(--bg-glass);border-radius:var(--r-md);border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
+              <img src="assets/phase1_tumoral.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="Parenchyme tumoral" onerror="this.style.display='none'">
+              <span style="position:absolute;color:var(--text-muted);font-size:0.85rem;z-index:-1">Image Phase 2 (Tumoral)</span>
+            </div>
+            <div style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:5px">Parenchyme tumoral (x20)</div>
+          </div>
         </div>
 
         <p style="font-weight:700;font-size:0.9rem;margin-bottom:10px">${d.phase2.consigne1}</p>
@@ -108,7 +108,7 @@ const Level4 = (() => {
 
         <div style="text-align:center;margin-bottom:20px;display:flex;justify-content:center">
            <div style="width:100%;max-width:500px;aspect-ratio:4/3;background:var(--bg-glass);border-radius:var(--r-md);border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
-              <img src="assets/phase3.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="Invasion et Agressivité x40" onerror="this.style.display='none'">
+              <img src="assets/phase3_real.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="Invasion et Agressivité x40" onerror="this.style.display='none'">
               <span style="color:var(--text-muted);font-size:0.85rem">Image Phase 3 (x40)</span>
            </div>
         </div>

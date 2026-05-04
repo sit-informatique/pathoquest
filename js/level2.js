@@ -51,7 +51,9 @@ const Level2 = (() => {
 
           <!-- Table de macroscopie -->
           <div style="flex:1;text-align:center;position:relative;margin:0 20px;padding:20px;background:#ffffff;border:1.5px solid var(--border-glass);border-radius:12px;box-shadow:var(--shadow-card)">
-            <div id="table-anim" style="font-size:3rem;margin-bottom:10px;transition:all 0.5s">🫁</div>
+            <div id="table-anim" style="margin-bottom:10px;transition:all 0.5s;height:250px;display:flex;align-items:center;justify-content:center;">
+              <img id="macro-main-img" src="assets/lobe_macroscopie_real.jpg" style="max-height:100%;max-width:100%;object-fit:contain;border-radius:15px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
+            </div>
             <div style="font-size:0.9rem;color:var(--text-primary);font-weight:bold">${d.description_macroscopique.lobe.split('—')[0]}</div>
             <div id="table-measurements" style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;letter-spacing:0.05em;background:var(--bg-secondary);display:inline-block;padding:4px 12px;border-radius:10px">Poids: ??? | Dimensions: ???</div>
             
@@ -222,14 +224,8 @@ const Level2 = (() => {
       </div>
 
       <div style="position:relative;width:100%;max-width:300px;height:350px;margin:0 auto;background:#f8fafc;border-radius:20px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center">
-        <!-- SVG Lung Schema -->
-        <svg viewBox="0 0 100 120" style="width:90%;height:90%;fill:#fecaca;stroke:#f87171;stroke-width:2">
-          <path d="M 50 10 C 20 10, 10 50, 20 90 C 25 110, 70 110, 80 80 C 90 50, 70 10, 50 10 Z"/>
-          <!-- Hile details -->
-          <circle cx="70" cy="50" r="5" fill="#64748b" stroke="none"/>
-          <circle cx="70" cy="65" r="4" fill="#ef4444" stroke="none"/>
-          <circle cx="80" cy="55" r="4" fill="#3b82f6" stroke="none"/>
-        </svg>
+        <!-- Real Lung Image -->
+        <img src="assets/lobe_macroscopie_real.jpg" alt="Pièce opératoire" style="width:90%;height:90%;object-fit:contain;border-radius:15px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
 
         <!-- Drop zones -->
         <div class="dnd-dropzone" ondragover="Level2.dragOver(event)" ondragleave="Level2.dragLeave(event)" ondrop="Level2.drop(event, 'lbl-apex')" style="position:absolute;top:2%;left:50%;transform:translateX(-50%);width:80px;height:35px"></div>
@@ -331,8 +327,9 @@ const Level2 = (() => {
     
     setTimeout(() => {
       student.textContent = "";
-      tableAnim.innerHTML = "⚖️ 🫁 📏";
-      tableAnim.style.transform = "scale(1.1)";
+      const mainImg = document.getElementById('macro-main-img');
+      if(mainImg) mainImg.src = "assets/lobe_macroscopie_inked.jpg";
+      tableAnim.style.transform = "scale(1.05)";
       
       setTimeout(() => {
         tableAnim.style.transform = "scale(1)";
@@ -356,13 +353,17 @@ const Level2 = (() => {
     
     setTimeout(() => {
       student.textContent = "";
-      tableAnim.innerHTML = "🫁 🫁 🫁";
-      tableAnim.style.transform = "scale(1.2)";
-      tableAnim.style.textShadow = "0 0 10px rgba(239,68,68,0.5)";
+      const mainImg = document.getElementById('macro-main-img');
+      if(mainImg) {
+          mainImg.style.filter = "contrast(1.2) sepia(0.2)";
+      }
+      tableAnim.style.transform = "scale(1.1)";
+      tableAnim.style.boxShadow = "inset 0 0 20px rgba(239,68,68,0.5)";
       
       setTimeout(() => {
         tableAnim.style.transform = "scale(1)";
-        tableAnim.style.textShadow = "none";
+        tableAnim.style.boxShadow = "none";
+        if(mainImg) mainImg.style.filter = "none";
         
         macroPhase = 3;
         select.disabled = false;

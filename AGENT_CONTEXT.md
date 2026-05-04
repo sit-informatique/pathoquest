@@ -1,7 +1,7 @@
 # 🤖 AGENT CONTEXT — PathoQuest
 > **Ce fichier est le point d'entrée obligatoire pour tout agent AI travaillant sur ce projet.**
 > **Lis ce fichier EN PREMIER avant de faire quoi que ce soit.**
-> Dernière mise à jour : 2026-05-01
+> Dernière mise à jour : 2026-05-04
 
 ---
 
@@ -74,16 +74,18 @@ pathoquest/
 │   └── level5.js             ← Niveau 5 compte rendu
 │
 └── assets/
-    ├── vial_insufficient.png    ← Prélèvement Niveau 1 (tube insuffisant)
-    ├── request_form.png         ← Fiche de demande d'examen Niveau 1
+    ├── vial_insufficient_real.jpg ← Prélèvement Niveau 1 (tube insuffisant)
+    ├── request_form_real.jpg      ← Fiche de demande d'examen Niveau 1
     ├── formol.png               ← Flacon formol Niveau 1
     ├── cassettes.png            ← Cassettes histologiques (Niveau 2)
     ├── etapes techniques.png    ← Schéma étapes traitement technique (Niveau 3)
     ├── microscopie.jpg          ← Photo double lecture microscopique (Niveau 4)
-    ├── phase1_sain.jpg          ← Microscopie parenchyme sain (Niveau 4)
-    ├── phase1_tumoral.jpg       ← Microscopie parenchyme tumoral (Niveau 4)
-    ├── phase2.jpg               ← Microscopie x20 (Niveau 4)
-    ├── phase3.jpg               ← Microscopie x40 invasion (Niveau 4)
+    ├── phase1_sain.jpg          ← Microscopie parenchyme sain (Niveau 4 Phase 2)
+    ├── phase1_tumoral.jpg       ← Microscopie parenchyme tumoral (Niveau 4 Phase 2)
+    ├── phase1_real.jpg          ← Microscopie globale (Niveau 4 Phase 1)
+    ├── phase3_real.jpg          ← Microscopie x40 invasion pleurale (Niveau 4 Phase 3)
+    ├── lobe_macroscopie_real.jpg← Pièce opératoire réelle (Niveau 2 orientation)
+    ├── lobe_macroscopie_inked.jpg← Pièce opératoire annotée (Niveau 2 mesure)
     ├── char_etudiant.png        ← ⭐ Photo réelle étudiante macroscopie (Niveau 2)
     ├── doc_senior1.png          ← ⭐ Photo réelle Dr Pathologiste Senior (Niveau 2)
     ├── lab_bg1.jpeg             ← Fond flottant haut droite
@@ -189,6 +191,16 @@ const ADMIN_EMAILS = ["nizartaboubi@gmail.com", "laboatfkamoun@gmail.com"];
 | **Total** | **900 pts** |
 
 ---
+
+### Session 2026-05-04
+- **Intégration d'images réelles cliniques/histologiques** :
+  - Niveau 1 : `request_form_real.jpg` et `vial_insufficient_real.jpg`
+  - Niveau 2 : Remplacement du schéma par `lobe_macroscopie_real.jpg` (orientation) et `lobe_macroscopie_inked.jpg` (mesure)
+  - Niveau 4 : Modification architecture images
+    - Phase 1 devient une vue unique large (`phase1_real.jpg`)
+    - Phase 2 récupère l'ancienne vue side-by-side (`phase1_sain.jpg` & `phase1_tumoral.jpg`)
+    - Phase 3 utilise `phase3_real.jpg` (invasion pleurale)
+- **Outil de transfert** : Mise à jour du script `copy_images.bat`
 
 ### Session 2026-05-03
 - **Annulation Test** : Suppression de l'écran "Briefing/Test" de préparation avant le niveau 1. Redirection de l'authentification directement vers l'accueil (`screen-home`).
