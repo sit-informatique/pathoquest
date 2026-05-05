@@ -55,7 +55,7 @@ const Level2 = (() => {
               <img id="macro-main-img" src="assets/lobe_macroscopie_real.jpg" style="max-height:100%;max-width:100%;object-fit:contain;border-radius:15px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
             </div>
             <div style="font-size:0.9rem;color:var(--text-primary);font-weight:bold">${d.description_macroscopique.lobe.split('—')[0]}</div>
-            <div id="table-measurements" style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;letter-spacing:0.05em;background:var(--bg-secondary);display:inline-block;padding:4px 12px;border-radius:10px">Poids: ??? | Dimensions: ???</div>
+            <div id="table-measurements" style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;letter-spacing:0.05em;background:transparent;display:inline-block;border-radius:10px"></div>
             
             <div id="description-form" style="display:none;margin-top:15px;text-align:left;background:var(--bg-primary);padding:15px;border-radius:8px;border:1px solid var(--cyan)">
               <div style="font-size:0.85rem;color:var(--text-primary);margin-bottom:10px;padding:8px;background:rgba(255,255,255,0.8);border-radius:4px;border-left:3px solid var(--primary)">
@@ -339,6 +339,7 @@ const Level2 = (() => {
         measurements.innerHTML = d.description_macroscopique.lobe.split('—').slice(1).join('—');
         measurements.style.background = "var(--primary-dark)";
         measurements.style.color = "#fff";
+        measurements.style.padding = "4px 12px";
         
         macroPhase = 2;
         select.disabled = false;
