@@ -287,7 +287,7 @@ const Level5 = (() => {
           <div style="font-family:var(--font-mono);font-size:0.82rem;line-height:1.9;color:var(--text-secondary)">
             <strong style="color:var(--text-primary)">Patient :</strong> ${d.patient.nom} — ${d.patient.prelevement}<br>
             <strong style="color:var(--text-primary)">Type :</strong> Carcinome épidermoïde — Pattern organoïde (nids et palissades)<br>
-            <strong style="color:var(--text-primary)">Taille :</strong> 5,2 cm dans sa plus grande dimension<br>
+            <strong style="color:var(--text-primary)">Taille :</strong> 5,5 cm dans sa plus grande dimension<br>
             <strong style="color:var(--text-primary)">Différenciation :</strong> Bien différencié kératinisant (globes cornés, ponts intercellulaires)<br>
             <strong style="color:var(--text-primary)">Marges :</strong> Recoupe bronchique saine<br>
             <strong style="color:var(--text-primary)">Statut ganglionnaire :</strong> N1 — 2 ganglions hilaires positifs / 5 prélevés<br>

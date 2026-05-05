@@ -134,9 +134,9 @@ const GAME_DATA = {
 
     description_macroscopique: {
       lobe: "Lobe supérieur droit — 14 × 9 × 7 cm — 280g",
-      tumeur: "Masse blanchâtre de 5,2 × 4,1 × 3,8 cm, à limites irrégulières mal définies, dure, non encapsulée, avec zones de rétraction pleurale",
+      tumeur: "La taille de la formation tumorale est 5,5x3 cm située à 3 cm de la recoupe bronchique. Masse blanchâtre à limites irrégulières mal définies, dure, non encapsulée, avec zones de rétraction pleurale",
       localisation: "Segment apical du lobe supérieur",
-      bronche: "Bronche lobaire sectionnée, berge bronchique à 3 cm de la tumeur",
+      bronche: "Bronche lobaire sectionnée",
       plèvre: "Rétraction pleurale en regard de la tumeur (envahissement suspecté)",
       parenchyme: "Parenchyme résiduel de couleur rosée, aéré, avec emphysème modéré",
       ganglions: "3 ganglions hilaires identifiés (Ø 0,8 à 1,4 cm), aspect ferme et +/- anthracosés"
@@ -450,8 +450,8 @@ const GAME_DATA = {
         id: "taille_tumorale",
         label: "Taille maximale de la tumeur (cm)",
         type: "input",
-        placeholder: "ex: 5.2",
-        correct: "5.2",
+        placeholder: "ex: 5.5",
+        correct: "5.5",
         points: 20
       },
       {
