@@ -340,7 +340,7 @@ const Level2 = (() => {
         macroPhase = 2;
         select.disabled = false;
         select.focus();
-        document.getElementById('senior-dialogue').innerHTML = `<strong><img src='assets/doc_senior1.png' alt='Senior' style='width:22px;height:22px;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;margin-right:6px;border:1.5px solid #38bdf8;'> Dr. Pathologiste (Senior) :</strong><br>« Très bien. Maintenant que nous avons le poids et les dimensions, il nous faut exposer la tumeur. Quelle est la prochaine étape ? »`;
+        document.getElementById('senior-dialogue').innerHTML = `<strong><img src='assets/doc_senior1.png' alt='Senior' style='width:22px;height:22px;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;margin-right:6px;border:1.5px solid #38bdf8;'> Dr. Pathologiste (Senior) :</strong><br>« Très bien. Le lobe mesure 13x6x1 cm<br>Quelle est la prochaine étape ? »`;
       }, 600);
     }, 600);
   }
@@ -355,7 +355,7 @@ const Level2 = (() => {
       student.textContent = "";
       const mainImg = document.getElementById('macro-main-img');
       if(mainImg) {
-          mainImg.style.filter = "contrast(1.2) sepia(0.2)";
+          mainImg.src = "assets/lobe_macroscopie_open_real.jpg";
       }
       tableAnim.style.transform = "scale(1.1)";
       tableAnim.style.boxShadow = "inset 0 0 20px rgba(239,68,68,0.5)";
@@ -363,7 +363,6 @@ const Level2 = (() => {
       setTimeout(() => {
         tableAnim.style.transform = "scale(1)";
         tableAnim.style.boxShadow = "none";
-        if(mainImg) mainImg.style.filter = "none";
         
         macroPhase = 3;
         select.disabled = false;

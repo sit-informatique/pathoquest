@@ -320,14 +320,27 @@ const GAME_DATA = {
       titre: "Phase 3 : La Traque des Critères TNM & Facteurs Pronostiques (x40)",
       objectif: "Analyse de l'invasion tumorale",
       intro: "Le diagnostic de carcinome épidermoïde est posé. Maintenant, vous devez identifier les signes d'extension locale et les facteurs de mauvais pronostic qui modifieront le pTNM.",
-      consigne: "Observez les champs microscopiques. Quels sont les deux signes d'agressivité formellement identifiés sur ces prélèvements ?",
+      consigne: "1- Cochez les signes d'agressivité (facteurs histo-pronostiques) que vous devez impérativement rechercher pour établir le stade de la maladie et le pronostic.",
+      consigne2: "2- Observez les champs microscopiques. Parmi les critères cités précédemment, quel est le signe d'agressivité identifié sur cette image ?",
+      agressivite_identifiee_options: [
+        "Invasion pleurale",
+        "Invasion bronchique",
+        "STAS (Diffusion aérienne)",
+        "Métastase ganglionnaire",
+        "Emboles vasculaires",
+        "Engainement péri-nerveux"
+      ],
+      agressivite_identifiee_correcte: "Métastase ganglionnaire",
       agressivite: [
         { id: "p3_a1", label: "Invasion pleurale", correct: true },
-        { id: "p3_a2", label: "Invasion bronchique", correct: false },
-        { id: "p3_a3", label: "STAS (Diffusion aérienne)", correct: false },
+        { id: "p3_a2", label: "Invasion bronchique", correct: true },
+        { id: "p3_a3", label: "STAS (Diffusion aérienne)", correct: true },
         { id: "p3_a4", label: "Métastase ganglionnaire", correct: true },
-        { id: "p3_a5", label: "Emboles vasculaires", correct: false },
-        { id: "p3_a6", label: "Engainement péri-nerveux", correct: false }
+        { id: "p3_a5", label: "Emboles vasculaires", correct: true },
+        { id: "p3_a6", label: "Engainement péri-nerveux", correct: true },
+        { id: "p3_a7", label: "Anthracose", correct: false },
+        { id: "p3_a8", label: "Métaplasie malpighienne régulière", correct: false },
+        { id: "p3_a9", label: "Hyperplasie des cellules caliciformes", correct: false }
       ]
     },
 
@@ -340,7 +353,63 @@ const GAME_DATA = {
       { element: "Métastase ganglionnaire", resultat: "N1 (2 ganglions hilaires positifs sur 5)", impact: "Modifie le stade pN" }
     ],
 
-    point_pedagogique: "<b>La précision du diagnostic histologique n'est pas qu'une simple rigueur académique ; elle constitue le pilier fondamental de la médecine personnalisée.</b><br><br>Un diagnostic morphologique exact est l'étape décisive qui permet d'orienter sans délai :<ul><li style='margin-bottom:6px'><b>Le bilan moléculaire :</b> En sélectionnant les biomarqueurs pertinents (NGS, FISH) pour préserver le matériel tumoral.</li><li style='margin-bottom:6px'><b>La stratégie thérapeutique :</b> En dictant le choix entre thérapies ciblées, immunothérapies ou protocoles conventionnels.</li><li style='margin-bottom:6px'><b>Le pronostic :</b> En évaluant précisément l'agressivité et l'extension tumorale (Staging pTNM).</li></ul>",
+    point_pedagogique: `🎓 Point pédagogique : <b>La précision du diagnostic histologique n'est pas qu'une simple rigueur académique ; elle constitue le pilier fondamental de la médecine personnalisée.</b><br><br>Un diagnostic morphologique exact est l'étape décisive qui permet d'orienter sans délai :<ul><li style='margin-bottom:6px'><b>Le bilan moléculaire :</b> En sélectionnant les biomarqueurs pertinents (NGS, FISH) pour préserver le matériel tumoral.</li><li style='margin-bottom:6px'><b>La stratégie thérapeutique :</b> En dictant le choix entre thérapies ciblées, immunothérapies ou protocoles conventionnels.</li><li style='margin-bottom:6px'><b>Le pronostic :</b> En évaluant précisément l'agressivité et l'extension tumorale (Staging pTNM).</li></ul>
+    <div style="overflow-x:auto; margin-top:20px;">
+      <table style="width:100%; border-collapse:collapse; font-size:0.85rem; text-align:left;">
+        <thead>
+          <tr style="background:var(--bg-secondary); color:var(--text-secondary);">
+            <th style="padding:10px; border:1px solid var(--border-glass);">Entité Histologique</th>
+            <th style="padding:10px; border:1px solid var(--border-glass);">Architecture (x20)</th>
+            <th style="padding:10px; border:1px solid var(--border-glass);">Morphologie cellulaire</th>
+            <th style="padding:10px; border:1px solid var(--border-glass);">Indices "clés"</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:10px; border:1px solid var(--border-glass); font-weight:bold; color:var(--cyan);">Carcinome épidermoïde</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Massifs, lobules, ponts intercellulaires</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Cellules polygonales, limites nettes</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Kératinisation (globes cornés, dyskératose)</td>
+          </tr>
+          <tr>
+            <td style="padding:10px; border:1px solid var(--border-glass); font-weight:bold; color:var(--cyan);">Adénocarcinome</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Glandes, papilles, acini</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Cellules cubiques/cylindriques</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Lumières ou vacuoles de mucus</td>
+          </tr>
+          <tr>
+            <td style="padding:10px; border:1px solid var(--border-glass); font-weight:bold; color:var(--cyan);">Carcinome à petites cellules</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Nappes diffuses, zones d'écrasement</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Cellules petite taille, indifférenciée, cytoplasme rare</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Ecrasement / moulage nucléaire</td>
+          </tr>
+          <tr>
+            <td style="padding:10px; border:1px solid var(--border-glass); font-weight:bold; color:var(--cyan);">Carcinome à grandes cellules</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Massifs solides, architecture anarchique</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Grandes cellules pléomorphes</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Diagnostic d'exclusion (ni glandulaire, ni malpighien)</td>
+          </tr>
+          <tr>
+            <td style="padding:10px; border:1px solid var(--border-glass); font-weight:bold; color:var(--cyan);">Carcinome neuroendocrine à grandes cellules</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Nids, palissades, architecture organoïde</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Grandes cellules</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Nécrose abondante + IM > 10 mitoses / 2 mm²</td>
+          </tr>
+          <tr>
+            <td style="padding:10px; border:1px solid var(--border-glass); font-weight:bold; color:var(--cyan);">Carcinoïde typique</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Organoïde, trabéculaire, très vasculaire</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Cellules régulières, monomorphes</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Chromatine "Sel et Poivre", < 2 mitoses, absence de nécrose</td>
+          </tr>
+          <tr>
+            <td style="padding:10px; border:1px solid var(--border-glass); font-weight:bold; color:var(--cyan);">Carcinoïde Atypique</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Idem Typique, mais plus désorganisé</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Idem Typique</td>
+            <td style="padding:10px; border:1px solid var(--border-glass);">Nécrose ponctuée ou 2-10 mitoses</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>`,
     
     message_succes: "🏆 Analyse microscopique excellente ! Le diagnostic de Carcinome Épidermoïde avec ses facteurs pronostiques est validé."
   },
@@ -374,7 +443,7 @@ const GAME_DATA = {
         label: "Pattern architectural prédominant",
         type: "select",
         options: ["--", "Acinaire", "Papillaire", "Organoïde", "Lobulaire"],
-        correct: "Organoïde",
+        correct: "Lobulaire",
         points: 20
       },
       {

@@ -12,6 +12,10 @@ const Level4 = (() => {
   let phase2_morpho_selected = new Set();
   let phase2_diag = "";
   let phase3_selected = new Set();
+  
+  let canvasHasInk = false;
+  let isDrawing = false;
+  let ctxP1 = null;
 
   function init() {
     phase = 1;
@@ -20,7 +24,53 @@ const Level4 = (() => {
     phase2_morpho_selected.clear();
     phase2_diag = "";
     phase3_selected.clear();
+    canvasHasInk = false;
     render();
+    setTimeout(initCanvas, 150);
+  }
+
+  function initCanvas() {
+    const canvas = document.getElementById('draw-canvas-p1');
+    if(!canvas) return;
+    
+    canvas.width = canvas.offsetWidth || 600;
+    canvas.height = canvas.offsetHeight || 450;
+    
+    ctxP1 = canvas.getContext('2d');
+    ctxP1.lineWidth = 4;
+    ctxP1.lineCap = 'round';
+    ctxP1.lineJoin = 'round';
+    ctxP1.strokeStyle = '#00E5FF';
+    
+    canvas.addEventListener('mousedown', (e) => { isDrawing = true; draw(e); });
+    canvas.addEventListener('mousemove', draw);
+    window.addEventListener('mouseup', () => { isDrawing = false; if(ctxP1) ctxP1.beginPath(); });
+    
+    canvas.addEventListener('touchstart', (e) => { isDrawing = true; draw(e.touches[0]); }, {passive:false});
+    canvas.addEventListener('touchmove', (e) => { if(isDrawing) e.preventDefault(); draw(e.touches[0]); }, {passive:false});
+    window.addEventListener('touchend', () => { isDrawing = false; if(ctxP1) ctxP1.beginPath(); });
+    
+    function draw(e) {
+      if(!isDrawing || !ctxP1) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+      const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+      
+      ctxP1.lineTo(x, y);
+      ctxP1.stroke();
+      ctxP1.beginPath();
+      ctxP1.moveTo(x, y);
+      canvasHasInk = true;
+    }
+  }
+
+  function clearCanvas() {
+    const canvas = document.getElementById('draw-canvas-p1');
+    if(ctxP1 && canvas) {
+      ctxP1.clearRect(0, 0, canvas.width, canvas.height);
+      ctxP1.beginPath();
+      canvasHasInk = false;
+    }
   }
 
   function render() {
@@ -33,15 +83,18 @@ const Level4 = (() => {
         <div class="card-title"><span class="card-icon">1️⃣</span> ${d.phase1.titre}</div>
         <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:15px">${d.phase1.objectif}</p>
         
-        <div style="text-align:center;margin-bottom:20px;display:flex;justify-content:center">
-           <div style="width:100%;max-width:600px;aspect-ratio:4/3;background:var(--bg-glass);border-radius:var(--r-md);border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
-              <img src="assets/phase1_real.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="Parenchyme sain et tumoral (x4)" onerror="this.style.display='none'">
+        <div style="text-align:center;margin-bottom:20px;display:flex;flex-direction:column;align-items:center;">
+           <p style="font-size:0.85rem;color:var(--cyan);margin-bottom:10px;font-weight:bold;">🖌️ Utilisez votre souris ou votre doigt pour délimiter la tumeur (en bas) du parenchyme sain (en haut).</p>
+           <div style="width:100%;max-width:600px;aspect-ratio:4/3;background:var(--bg-glass);border-radius:var(--r-md);border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;cursor:crosshair;">
+              <img src="assets/phase1_real.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;pointer-events:none;" alt="Parenchyme sain et tumoral (x4)" onerror="this.style.display='none'">
               <span style="color:var(--text-muted);font-size:0.85rem">Image Phase 1 (x4)</span>
+              <canvas id="draw-canvas-p1" style="position:absolute;inset:0;width:100%;height:100%;z-index:10;touch-action:none;"></canvas>
            </div>
+           <button class="btn btn-secondary btn-sm" onclick="Level4.clearCanvas()" style="margin-top:10px;padding:4px 12px;font-size:0.8rem;background:rgba(255,255,255,0.1);color:white;border:1px solid var(--border-glass);border-radius:4px;">Effacer le tracé</button>
         </div>
 
         <p style="font-weight:700;font-size:0.9rem;margin-bottom:10px">${d.phase1.consigne}</p>
-        <div style="font-size:0.8rem;color:var(--cyan);margin-bottom:15px;font-weight:bold">Mémo : ${d.phase1.memo}</div>
+        <div id="memo-p1" style="font-size:0.8rem;color:var(--cyan);margin-bottom:15px;font-weight:bold;display:none;">Mémo : ${d.phase1.memo}</div>
         
         <div class="anomaly-grid">
           ${d.phase1.criteres.map(c => `
@@ -121,6 +174,12 @@ const Level4 = (() => {
             </div>
           `).join('')}
         </div>
+        
+        <p style="font-weight:700;font-size:0.9rem;margin-top:25px;margin-bottom:10px">${d.phase3.consigne2}</p>
+        <select id="p3-identifie" class="diag-select" style="background-color:white;border:1.5px solid var(--border-glass);border-radius:6px;padding:8px 12px;color:var(--text-primary);font-size:0.88rem;width:100%;max-width:400px">
+          <option value="">— Sélectionnez un signe —</option>
+          ${d.phase3.agressivite_identifiee_options.map(o => `<option value="${o}">${o}</option>`).join('')}
+        </select>
 
         <div class="level-actions" style="margin-top:20px">
           <button class="btn btn-success btn-lg" onclick="Level4.validerFinal()" id="btn-p3">Terminer l'Analyse Microscopique</button>
@@ -155,16 +214,16 @@ const Level4 = (() => {
     const el = document.getElementById('p3-' + id);
     if (phase3_selected.has(id)) { phase3_selected.delete(id); el.classList.remove('selected'); }
     else {
-      if (phase3_selected.size >= 2) {
-        Game.toast('warning', 'Limite atteinte', 'Sélectionnez uniquement les DEUX signes identifiés sur les clichés.', 0);
-        return;
-      }
       phase3_selected.add(id);
       el.classList.add('selected');
     }
   }
 
   function validerPhase1() {
+    if (!canvasHasInk) {
+      Game.toast('warning', 'Action requise', 'Veuillez tracer une ligne pour délimiter la tumeur avant de valider.', 0);
+      return;
+    }
     if (phase1_selected.size === 0) {
       Game.toast('warning', 'Attention', 'Veuillez sélectionner au moins un critère de malignité.', 0);
       return;
@@ -191,6 +250,30 @@ const Level4 = (() => {
       Game.toast('success', 'Phase 1 validée', 'Tous les critères de malignité identifiés !', pts);
     } else {
       Game.toast('warning', 'Phase 1 terminée', "Quelques imprécisions dans l'identification des critères.", pts);
+    }
+    
+    const memoEl = document.getElementById('memo-p1');
+    if (memoEl) memoEl.style.display = 'block';
+
+    // Afficher la véritable limite (validation visuelle)
+    const canvas = document.getElementById('draw-canvas-p1');
+    if(ctxP1 && canvas) {
+      ctxP1.beginPath();
+      const yBoundary = canvas.height * 0.60; // Approximativement la limite sur l'image
+      ctxP1.moveTo(0, yBoundary);
+      ctxP1.bezierCurveTo(canvas.width * 0.3, yBoundary + 20, canvas.width * 0.6, yBoundary - 15, canvas.width, yBoundary - 5);
+      ctxP1.lineWidth = 5;
+      ctxP1.strokeStyle = '#22c55e'; // Vert succès
+      ctxP1.setLineDash([12, 8]);
+      ctxP1.stroke();
+      ctxP1.setLineDash([]);
+      
+      ctxP1.font = "bold 16px sans-serif";
+      ctxP1.fillStyle = "#22c55e";
+      ctxP1.fillText("✓ Limite réelle du front tumoral", 15, yBoundary - 15);
+      
+      canvas.style.pointerEvents = 'none'; // Désactiver le dessin
+      document.querySelector('#card-phase1 button.btn-secondary').style.display = 'none'; // Cacher le bouton Effacer
     }
 
     document.getElementById('btn-p1').style.display = 'none';
@@ -236,30 +319,50 @@ const Level4 = (() => {
   }
 
   function validerFinal() {
-    if (phase3_selected.size < 2) {
-      Game.toast('warning', 'Attention', "Veuillez identifier les deux signes d'agressivité.", 0);
+    if (phase3_selected.size === 0) {
+      Game.toast('warning', 'Attention', "Veuillez identifier au moins un signe d'agressivité.", 0);
       return;
     }
     submitted = true;
     const d = GAME_DATA.level4.phase3;
     
     let correctCount = 0;
+    let errorCount = 0;
+    const totalCorrect = d.agressivite.filter(c => c.correct).length;
+    
     d.agressivite.forEach(c => {
       const isSelected = phase3_selected.has(c.id);
       const el = document.getElementById('p3-' + c.id);
       if (isSelected && c.correct) { correctCount++; el.style.background = 'var(--success-bg)'; }
-      if (isSelected && !c.correct) { el.style.borderColor = 'var(--danger)'; }
+      if (isSelected && !c.correct) { errorCount++; el.style.borderColor = 'var(--danger)'; }
+      if (!isSelected && c.correct) { el.style.borderColor = 'var(--warning)'; } // indicate missed correct ones
       el.style.pointerEvents = 'none';
     });
     
-    if (correctCount === 2) {
-      Game.addScore(50, LEVEL_NUM);
-      Game.toast('success', 'Analyse terminée', "Signes d'agressivité correctement identifiés !", 50);
+    let pts = Math.max(0, (correctCount * 10) - (errorCount * 15));
+    
+    // Check Part 2 answer
+    const identifieVal = document.getElementById('p3-identifie').value;
+    if (identifieVal === d.agressivite_identifiee_correcte) {
+      pts += 30;
+      Game.toast('success', 'Excellente observation !', "La métastase ganglionnaire est bien présente sur cette coupe.", 30);
+    } else if (identifieVal !== '') {
+      Game.addPenalty(10, LEVEL_NUM);
+      Game.toast('error', 'Erreur d\'identification', "Il s'agissait d'une métastase ganglionnaire.", -10);
     } else {
-      Game.toast('warning', 'Imprécision', "Les deux signes à identifier étaient l'invasion pleurale et la métastase ganglionnaire.", 0);
+      Game.toast('warning', 'Omission', "Vous n'avez pas identifié le signe d'agressivité sur l'image.", 0);
+    }
+    
+    Game.addScore(pts, LEVEL_NUM);
+    
+    if (correctCount === totalCorrect && errorCount === 0 && identifieVal === d.agressivite_identifiee_correcte) {
+      Game.toast('success', 'Analyse terminée', "Tous les signes d'agressivité ont été correctement identifiés !", pts);
+    } else {
+      Game.toast('warning', 'Imprécision', "Il manque certains facteurs pronostiques essentiels ou vous avez fait des erreurs d'identification.", pts);
     }
     
     document.getElementById('btn-p3').style.display = 'none';
+    document.getElementById('p3-identifie').disabled = true;
     Game.setLevelPassed(LEVEL_NUM, true);
     
     const fb = document.getElementById('level4-feedback');
@@ -301,5 +404,5 @@ const Level4 = (() => {
     fb.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  return { init, toggleP1, toggleP2, toggleP3, setDiag, validerPhase1, validerPhase2, validerFinal };
+  return { init, toggleP1, toggleP2, toggleP3, setDiag, validerPhase1, validerPhase2, validerFinal, clearCanvas };
 })();

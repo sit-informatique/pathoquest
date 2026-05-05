@@ -83,10 +83,13 @@ const Level5 = (() => {
 
       <!-- Calculateur pTNM -->
       <div class="card">
-        <div class="card-title"><span class="card-icon">📊</span> Classification pTNM — 9ème édition IASLC 2025</div>
-        <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:20px">
-          En tenant compte de la taille tumorale, de l'invasion pleurale (PL1) et du statut ganglionnaire N1, établissez la classification pTNM finale.
+        <div class="card-title"><span class="card-icon">📊</span> Classification pTNM (IASLC 9th Edition, 2025)</div>
+        <p style="font-weight:700;font-size:0.9rem;margin-bottom:15px">
+          2-En vous basant sur la 9ème édition du TNM fournie, établissez la classification pTNM finale.
         </p>
+        <div style="margin-bottom: 25px; width: 100%; max-width: 800px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-glass); box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+           <img src="assets/tbb.jpg" style="width: 100%; height: auto; display: block;" alt="Tableau pTNM 9ème édition" onerror="this.src='assets/tbb.png'">
+        </div>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px;margin-bottom:20px">
           ${['pT', 'pN', 'pM'].map(t => `
@@ -129,7 +132,7 @@ const Level5 = (() => {
     const opts = {
       pT:  ['pTx','pT0','pTis','pT1a','pT1b','pT1c','pT2a','pT2b','pT3','pT4'],
       pN:  ['pNx','pN0','pN1','pN2','pN3'],
-      pM:  ['pM0','pM1a','pM1b','pM1c']
+      pM:  ['pMx','pM0','pM1a','pM1b','pM1c']
     };
     return (opts[type] || []).map(o => `<option value="${o}">${o}</option>`).join('');
   }

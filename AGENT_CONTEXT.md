@@ -192,6 +192,25 @@ const ADMIN_EMAILS = ["nizartaboubi@gmail.com", "laboatfkamoun@gmail.com"];
 
 ---
 
+### Session 2026-05-05
+- **Niveau 4 (Phase 1)** :
+  - Ajout d'une validation visuelle (ligne pointillée verte) représentant le véritable front tumoral lors du clic sur "Valider".
+  - Affichage conditionnel du mémo (AANMP) uniquement après validation.
+  - Recadrage et floutage partiel de la photo d'intro "Double lecture" (microscopie) pour préserver l'anonymat (CSS `object-fit: cover` + `filter: blur()`).
+- **Niveau 4 (Phase 3)** :
+  - Modification de la consigne et suppression de la limite de deux choix. Ajout de mauvaises réponses pièges dans `data.js`.
+  - Ajout d'une question 2 (liste déroulante) pour identifier précisément la métastase ganglionnaire sur la coupe.
+- **Niveau 2 (Macroscopie)** :
+  - Modification du dialogue du Dr. Senior lors de la mesure.
+  - Intégration de l'image de la pièce ouverte (`lobe_macroscopie_open_real.jpg`) au moment de l'action "Ouvrir la pièce".
+- **Niveau 5 (Compte Rendu)** :
+  - Ajout de l'option `pMx` au menu déroulant pM.
+  - Modification de la consigne finale pour l'établissement du stade pTNM.
+  - Ajout de l'intégration de l'image du tableau pTNM (`tbb.jpg`) juste au-dessus du sélecteur.
+  - Amélioration de la mise en valeur du point pédagogique (ajout de l'icône "🎓 Point pédagogique :").
+- **Général** :
+  - Mise à jour de `copy_images.bat` pour intégrer dynamiquement les nouvelles images uploadées en cours de session.
+
 ### Session 2026-05-04
 - **Intégration d'images réelles cliniques/histologiques** :
   - Niveau 1 : `request_form_real.jpg` et `vial_insufficient_real.jpg`
