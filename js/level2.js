@@ -58,6 +58,9 @@ const Level2 = (() => {
             <div id="table-measurements" style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;letter-spacing:0.05em;background:var(--bg-secondary);display:inline-block;padding:4px 12px;border-radius:10px">Poids: ??? | Dimensions: ???</div>
             
             <div id="description-form" style="display:none;margin-top:15px;text-align:left;background:var(--bg-primary);padding:15px;border-radius:8px;border:1px solid var(--cyan)">
+              <div style="font-size:0.85rem;color:var(--text-primary);margin-bottom:10px;padding:8px;background:rgba(255,255,255,0.8);border-radius:4px;border-left:3px solid var(--primary)">
+                 <strong>💡 Information :</strong> La taille de la formation tumorale est 5,5x3 cm située à 3 cm de la recoupe bronchique.
+              </div>
               <label style="font-size:0.85rem;color:var(--cyan);font-weight:bold;margin-bottom:8px;display:block">📝 Quels éléments devez-vous décrire formellement sur cette pièce ?</label>
               <textarea id="student-description" rows="3" class="form-control" style="width:100%;background:white;color:var(--text-primary);border:1.5px solid var(--border-glass);border-radius:6px;padding:8px;font-size:0.85rem;resize:vertical" placeholder="Saisissez votre liste ici..."></textarea>
               <button class="btn btn-sm btn-info" style="margin-top:10px" onclick="Level2.submitDescription(event)">✅ Valider ma réponse</button>

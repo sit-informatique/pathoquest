@@ -84,7 +84,7 @@ const Level4 = (() => {
         <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:15px">${d.phase1.objectif}</p>
         
         <div style="text-align:center;margin-bottom:20px;display:flex;flex-direction:column;align-items:center;">
-           <p style="font-size:0.85rem;color:var(--cyan);margin-bottom:10px;font-weight:bold;">🖌️ Utilisez votre souris ou votre doigt pour délimiter la tumeur (en bas) du parenchyme sain (en haut).</p>
+           <p style="font-size:0.85rem;color:var(--cyan);margin-bottom:10px;font-weight:bold;">🖌️ Utilisez votre souris ou votre doigt pour délimiter la tumeur du parenchyme sain.</p>
            <div style="width:100%;max-width:600px;aspect-ratio:4/3;background:var(--bg-glass);border-radius:var(--r-md);border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;cursor:crosshair;">
               <img src="assets/phase1_real.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;pointer-events:none;" alt="Parenchyme sain et tumoral (x4)" onerror="this.style.display='none'">
               <span style="color:var(--text-muted);font-size:0.85rem">Image Phase 1 (x4)</span>
