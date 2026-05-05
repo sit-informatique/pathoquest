@@ -120,14 +120,14 @@ const Level4 = (() => {
               <img src="assets/phase1_sain.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="Parenchyme sain" onerror="this.style.display='none'">
               <span style="position:absolute;color:var(--text-muted);font-size:0.85rem;z-index:-1">Image Phase 2 (Sain)</span>
             </div>
-            <div style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:5px">Parenchyme sain (x20)</div>
+
           </div>
           <div style="flex:1;min-width:250px">
             <div style="width:100%;aspect-ratio:4/3;background:var(--bg-glass);border-radius:var(--r-md);border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
               <img src="assets/phase1_tumoral.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="Parenchyme tumoral" onerror="this.style.display='none'">
               <span style="position:absolute;color:var(--text-muted);font-size:0.85rem;z-index:-1">Image Phase 2 (Tumoral)</span>
             </div>
-            <div style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:5px">Parenchyme tumoral (x20)</div>
+
           </div>
         </div>
 
