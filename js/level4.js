@@ -159,13 +159,6 @@ const Level4 = (() => {
           ${d.phase3.intro}
         </div>
 
-        <div style="text-align:center;margin-bottom:20px;display:flex;justify-content:center">
-           <div style="width:100%;max-width:500px;aspect-ratio:4/3;background:var(--bg-glass);border-radius:var(--r-md);border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
-              <img src="assets/phase3_real.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="Invasion et Agressivité x40" onerror="this.style.display='none'">
-              <span style="color:var(--text-muted);font-size:0.85rem">Image Phase 3 (x40)</span>
-           </div>
-        </div>
-
         <p style="font-weight:700;font-size:0.9rem;margin-bottom:10px">${d.phase3.consigne}</p>
         <div class="anomaly-grid">
           ${d.phase3.agressivite.map(c => `
@@ -176,6 +169,13 @@ const Level4 = (() => {
         </div>
         
         <p style="font-weight:700;font-size:0.9rem;margin-top:25px;margin-bottom:10px">${d.phase3.consigne2}</p>
+
+        <div style="text-align:center;margin-bottom:20px;display:flex;justify-content:center">
+           <div style="width:100%;max-width:500px;aspect-ratio:4/3;background:var(--bg-glass);border-radius:var(--r-md);border:1px solid var(--border-glass);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
+              <img src="assets/phase3_real.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="Invasion et Agressivité x40" onerror="this.style.display='none'">
+              <span style="color:var(--text-muted);font-size:0.85rem">Image Phase 3 (x40)</span>
+           </div>
+        </div>
         <select id="p3-identifie" class="diag-select" style="background-color:white;border:1.5px solid var(--border-glass);border-radius:6px;padding:8px 12px;color:var(--text-primary);font-size:0.88rem;width:100%;max-width:400px">
           <option value="">— Sélectionnez un signe —</option>
           ${d.phase3.agressivite_identifiee_options.map(o => `<option value="${o}">${o}</option>`).join('')}
