@@ -478,7 +478,7 @@ const GAME_DATA = {
       detail: "2 ganglions hilaires positifs sur 5 prélevés"
     },
 
-    tnm_correct: { pT: "pT2b", pN: "pN1", pM: "pM0", stade: "IIB" },
+    tnm_correct: { pT: "pT3", pN: "pN1", pM: "pMx", stade: "IIIA" },
 
     message_parfait: "🏆 Félicitations, Docteur. Votre compte rendu est validé et le dossier peut maintenant passer en RCP (Réunion de Concertation Pluridisciplinaire) pour décider du traitement adjuvant.",
     message_acceptable: "✅ Compte rendu acceptable avec quelques imprécisions. Vérifiez la différenciation et le pattern architectural — éléments clés pour la stratégie thérapeutique.",

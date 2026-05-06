@@ -145,7 +145,7 @@ const Level5 = (() => {
     if (!field || !hintEl) return;
 
     const correct = field.correct.toLowerCase().trim();
-    const userVal = value.toLowerCase().trim();
+    const userVal = value.toLowerCase().trim().replace(',', '.');
 
     if (userVal === '--' || userVal === '') {
       hintEl.textContent = '';
@@ -211,7 +211,7 @@ const Level5 = (() => {
 
     // Vérification des champs
     d.fields.forEach(f => {
-      const userVal = (answers[f.id] || '').toLowerCase().trim();
+      const userVal = (answers[f.id] || '').toLowerCase().trim().replace(',', '.');
       const correctVal = f.correct.toLowerCase().trim();
       const isCorrect = userVal === correctVal || correctVal.includes(userVal);
 
@@ -291,7 +291,7 @@ const Level5 = (() => {
             <strong style="color:var(--text-primary)">Différenciation :</strong> Bien différencié kératinisant (globes cornés, ponts intercellulaires)<br>
             <strong style="color:var(--text-primary)">Marges :</strong> Recoupe bronchique saine<br>
             <strong style="color:var(--text-primary)">Statut ganglionnaire :</strong> N1 — 2 ganglions hilaires positifs / 5 prélevés<br>
-            <strong style="color:var(--text-primary)">Classification :</strong> <span style="color:var(--warning);font-weight:700">pT2b · pN1 · pM0 — Stade IIB</span> (IASLC 9th ed., 2025)
+            <strong style="color:var(--text-primary)">Classification :</strong> <span style="color:var(--warning);font-weight:700">pT3 · pN1 · pMx — Stade IIIA</span> (IASLC 9th ed., 2025)
           </div>
         </div>
 
