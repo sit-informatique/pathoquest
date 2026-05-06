@@ -221,21 +221,27 @@ const btnRegister = document.getElementById('btn-register');
         }
 
         const userDoc = await getDoc(doc(db, "users", user.uid));
+        
+        // Cacher tous les blocs par défaut pour éviter les superpositions
+        document.getElementById('form-login-block').style.display='none';
+        document.getElementById('form-register-block').style.display='none';
+        document.getElementById('form-pending-block').style.display='none';
+        document.getElementById('form-re-request-block').style.display='none';
+
         if (userDoc.exists() && userDoc.data().status === "approved") {
           console.log("Étudiant approuvé. Redirection Home.");
           document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
           document.getElementById('screen-home').classList.add('active');
         } else if (userDoc.exists() && userDoc.data().status === "pending") {
           console.log("Étudiant en attente.");
-          document.getElementById('form-login-block').style.display='none'; 
           document.getElementById('form-pending-block').style.display='block';
         } else if (!userDoc.exists()) {
           console.warn("Utilisateur authentifié mais sans profil (supprimé).");
-          document.getElementById('form-login-block').style.display='none'; 
           document.getElementById('form-re-request-block').style.display='block';
         } else {
           console.warn("Statut inconnu. Déconnexion.");
           auth.signOut();
+          document.getElementById('form-login-block').style.display='block';
         }
       }
     });
