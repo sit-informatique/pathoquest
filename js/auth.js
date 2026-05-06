@@ -48,7 +48,8 @@ async function loadAdminList() {
       const data = docSnap.data();
       const uid = docSnap.id;
       
-      const scoreInfo = data.score !== undefined ? `<span style="color:var(--cyan);font-weight:bold;margin-left:10px;">${data.score}/900 (${data.percent}%)</span>` : '';
+      const results = data.results || null;
+      const scoreInfo = results ? `<span style="color:var(--cyan);font-weight:bold;margin-left:10px;">${results.totalScore}/900 (${results.percent}%)</span>` : '';
       
       const html = `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--border-glass);">
         <div>
@@ -60,6 +61,7 @@ async function loadAdminList() {
           ${data.status === 'pending' ? 
             `<button class="btn btn-primary btn-sm btn-approve" data-uid="${uid}">✅ Approuver</button>` : 
             `<span style="color:var(--success);font-weight:bold;font-size:0.85em;">Approuvé</span>
+             ${results ? `<button class="btn btn-ghost btn-sm btn-bilan" data-uid="${uid}">📄 Voir Bilan</button>` : ''}
              <button class="btn btn-danger btn-sm btn-delete" data-uid="${uid}" style="padding:4px 8px;font-size:0.7rem;">🗑️ Supprimer</button>`
           }
         </div>
@@ -86,6 +88,17 @@ async function loadAdminList() {
         if (confirm("Voulez-vous vraiment supprimer cet étudiant et lui couper l'accès ?")) {
           await deleteDoc(doc(db, "users", uid));
           loadAdminList();
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-bilan').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const uid = e.currentTarget.getAttribute('data-uid');
+        const userDoc = await getDoc(doc(db, "users", uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          showStudentBilan(userData.name, userData.results);
         }
       });
     });
@@ -233,18 +246,60 @@ const btnRegister = document.getElementById('btn-register');
       location.reload(); // Refresh to stop the game state
     });
   }
-  // Global function to save score
-  window.saveUserScore = async (score, percent) => {
+  // Global function to save results
+  window.saveUserScore = async (results) => {
     if (auth.currentUser && db) {
       try {
         await updateDoc(doc(db, "users", auth.currentUser.uid), {
-          score: score,
-          percent: percent,
+          results: results,
           lastCompleted: new Date().toISOString()
         });
-        console.log("Score enregistré avec succès.");
+        console.log("Résultats détaillés enregistrés.");
       } catch (e) {
-        console.error("Erreur lors de l'enregistrement du score:", e);
+        console.error("Erreur lors de l'enregistrement des résultats:", e);
       }
     }
   };
+
+  function showStudentBilan(name, results) {
+    if (!results) return;
+    const overlay = document.createElement('div');
+    overlay.style = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);";
+    
+    const levelNames = ["Réception", "Macroscopie", "Technique", "Microscopie", "Compte Rendu"];
+    const levelIcons = ["🧫", "🔬", "⚗️", "🔭", "📋"];
+    
+    let levelsHTML = results.levelScores.map((s, i) => `
+      <div style="display:flex;justify-content:space-between;padding:12px;border-bottom:1px solid #eee;background:white;">
+        <span style="font-weight:600;color:var(--text-secondary);">${levelIcons[i]} ${levelNames[i]}</span>
+        <span style="font-weight:800;color:${results.levelPassed[i] ? '#65e209' : '#dc2626'}">${s} pts</span>
+      </div>
+    `).join('');
+
+    overlay.innerHTML = `
+      <div style="background:white;padding:32px;border-radius:20px;max-width:500px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,0.4);position:relative;animation:screenEnter 0.3s ease;">
+        <button class="close-bilan" style="position:absolute;top:20px;right:20px;border:none;background:#f1f5f9;width:32px;height:32px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">&times;</button>
+        
+        <h2 style="color:var(--cyan);margin-bottom:24px;font-size:1.5rem;font-weight:900;">📊 Bilan de ${name}</h2>
+        
+        <div style="background:#f8fafc;padding:20px;border-radius:14px;margin-bottom:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px;border:1px solid #e2e8f0;">
+          <div><div style="font-size:0.65rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;font-weight:700;">Score Total</div><div style="font-weight:900;font-size:1.3rem;color:var(--cyan);">${results.totalScore}/900</div></div>
+          <div><div style="font-size:0.65rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;font-weight:700;">Réussite</div><div style="font-weight:900;font-size:1.3rem;color:#65e209;">${results.percent}%</div></div>
+          <div><div style="font-size:0.65rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;font-weight:700;">Temps Total</div><div style="font-weight:700;color:var(--text-primary);">${results.time}</div></div>
+          <div><div style="font-size:0.65rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;font-weight:700;">Erreurs Critiques</div><div style="font-weight:700;color:#dc2626;">${results.errors}</div></div>
+        </div>
+
+        <div style="border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.02);">
+          <div style="background:#f1f5f9;padding:10px 12px;font-size:0.7rem;text-transform:uppercase;font-weight:800;color:#64748b;letter-spacing:0.05em;">Détail par niveau</div>
+          ${levelsHTML}
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;margin-top:28px;justify-content:center;border-radius:100px;padding:14px;" id="close-bilan-btn">Fermer le bilan</button>
+      </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    const close = () => overlay.remove();
+    overlay.querySelector('.close-bilan').onclick = close;
+    overlay.querySelector('#close-bilan-btn').onclick = close;
+  }

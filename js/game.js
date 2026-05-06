@@ -257,9 +257,17 @@ const Game = (() => {
       </div>
     `).join('');
 
-    // Save score to Firestore if function is available
+    // Save full results to Firestore if function is available
     if (window.saveUserScore) {
-      window.saveUserScore(finalScore, pct);
+      window.saveUserScore({
+        totalScore: finalScore,
+        percent: pct,
+        time: formatTime(s.secondsElapsed),
+        errors: s.criticalErrors,
+        penalties: s.penalties,
+        levelScores: s.levelScores,
+        levelPassed: s.levelPassed
+      });
     }
   }
 

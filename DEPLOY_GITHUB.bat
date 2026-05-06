@@ -5,7 +5,7 @@ echo ========================================================
 echo.
 
 git add .
-git commit -m "Integration de toutes les images reelles (Niveaux 1, 2, 4) et MAJ du contexte"
+git commit -m "Mise à jour : Gestion des étudiants, suppression et bilans détaillés"
 git push origin main
 
 echo.
