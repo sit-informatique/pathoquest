@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, updateDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
 // TODO: Replace with the user's Firebase config
 const firebaseConfig = {
@@ -47,10 +47,24 @@ async function loadAdminList() {
     querySnapshot.forEach((docSnap) => {
       const data = docSnap.data();
       const uid = docSnap.id;
+      
+      const scoreInfo = data.score !== undefined ? `<span style="color:var(--cyan);font-weight:bold;margin-left:10px;">${data.score}/900 (${data.percent}%)</span>` : '';
+      
       const html = `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--border-glass);">
-        <div><strong style="color:var(--text-primary);">${data.name}</strong> <span style="color:var(--text-muted);font-size:0.85em;">(${data.email})</span></div>
-        ${data.status === 'pending' ? `<button class="btn btn-primary btn-sm btn-approve" data-uid="${uid}">✅ Approuver</button>` : `<span style="color:var(--success);font-weight:bold;font-size:0.85em;">Approuvé</span>`}
+        <div>
+          <strong style="color:var(--text-primary);">${data.name}</strong> 
+          <span style="color:var(--text-muted);font-size:0.85em;">(${data.email})</span>
+          ${scoreInfo}
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          ${data.status === 'pending' ? 
+            `<button class="btn btn-primary btn-sm btn-approve" data-uid="${uid}">✅ Approuver</button>` : 
+            `<span style="color:var(--success);font-weight:bold;font-size:0.85em;">Approuvé</span>
+             <button class="btn btn-danger btn-sm btn-delete" data-uid="${uid}" style="padding:4px 8px;font-size:0.7rem;">🗑️ Supprimer</button>`
+          }
+        </div>
       </div>`;
+      
       if (data.status === 'pending') pendingHTML += html;
       else approvedHTML += html;
     });
@@ -60,9 +74,19 @@ async function loadAdminList() {
 
     document.querySelectorAll('.btn-approve').forEach(btn => {
       btn.addEventListener('click', async (e) => {
-        const uid = e.target.getAttribute('data-uid');
+        const uid = e.currentTarget.getAttribute('data-uid');
         await updateDoc(doc(db, "users", uid), { status: "approved" });
         loadAdminList(); // Recharge la liste
+      });
+    });
+
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const uid = e.currentTarget.getAttribute('data-uid');
+        if (confirm("Voulez-vous vraiment supprimer cet étudiant et lui couper l'accès ?")) {
+          await deleteDoc(doc(db, "users", uid));
+          loadAdminList();
+        }
       });
     });
 
@@ -209,3 +233,18 @@ const btnRegister = document.getElementById('btn-register');
       location.reload(); // Refresh to stop the game state
     });
   }
+  // Global function to save score
+  window.saveUserScore = async (score, percent) => {
+    if (auth.currentUser && db) {
+      try {
+        await updateDoc(doc(db, "users", auth.currentUser.uid), {
+          score: score,
+          percent: percent,
+          lastCompleted: new Date().toISOString()
+        });
+        console.log("Score enregistré avec succès.");
+      } catch (e) {
+        console.error("Erreur lors de l'enregistrement du score:", e);
+      }
+    }
+  };

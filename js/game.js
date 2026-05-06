@@ -249,14 +249,18 @@ const Game = (() => {
     document.getElementById('result-penalties').textContent = s.penalties;
     document.getElementById('result-bonus').textContent = timeBonus > 0 ? `+${timeBonus}` : '0';
 
-    const levelGrid = document.getElementById('result-level-grid');
-    levelGrid.innerHTML = s.levelScores.map((sc, i) => `
+    document.getElementById('result-level-grid').innerHTML = s.levelScores.map((sc, i) => `
       <div class="result-level-item ${s.levelPassed[i] ? 'passed' : 'failed'}">
         <div class="result-level-icon">${levelIcons[i]}</div>
         <div class="result-level-label">${levelNames[i]}</div>
         <div class="result-level-pts">${sc} pts</div>
       </div>
     `).join('');
+
+    // Save score to Firestore if function is available
+    if (window.saveUserScore) {
+      window.saveUserScore(finalScore, pct);
+    }
   }
 
   // ── Public API ────────────────────────────────────────────────
