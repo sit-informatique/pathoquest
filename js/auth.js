@@ -136,15 +136,27 @@ const btnRegister = document.getElementById('btn-register');
 
         const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
         
+        // Cacher tous les blocs d'abord
+        document.getElementById('form-login-block').style.display='none';
+        document.getElementById('form-pending-block').style.display='none';
+        document.getElementById('form-re-request-block').style.display='none';
+
         if (userDoc.exists() && userDoc.data().status === "approved") {
-          // Student Access granted
+          // Étudiant approuvé → accès au jeu
           document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
           document.getElementById('screen-home').classList.add('active');
-          Game.init(); // Réinitialiser l'HUD au login
-        } else {
-          auth.signOut();
-          document.getElementById('form-login-block').style.display='none'; 
+          Game.init();
+        } else if (userDoc.exists() && userDoc.data().status === "pending") {
+          // Étudiant en attente → message d'attente
           document.getElementById('form-pending-block').style.display='block';
+        } else if (!userDoc.exists()) {
+          // Étudiant supprimé par admin → proposer une nouvelle demande d'accès
+          document.getElementById('form-re-request-block').style.display='block';
+        } else {
+          // Cas inconnu
+          auth.signOut();
+          document.getElementById('form-login-block').style.display='block';
+          showMsg("Accès refusé. Contactez l'administrateur.");
         }
       } catch (error) {
         if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {

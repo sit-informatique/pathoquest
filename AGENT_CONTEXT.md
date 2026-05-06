@@ -1,7 +1,7 @@
 # 🤖 AGENT CONTEXT — PathoQuest
 > **Ce fichier est le point d'entrée obligatoire pour tout agent AI travaillant sur ce projet.**
 > **Lis ce fichier EN PREMIER avant de faire quoi que ce soit.**
-> Dernière mise à jour : 2026-05-04
+> Dernière mise à jour : 2026-05-06
 
 ---
 
@@ -26,8 +26,12 @@ du laboratoire de réception jusqu'au compte rendu anatomo-pathologique final.
 |-----------|------|-------|
 | **Authentification Firebase** | ✅ Complet | Login, inscription, validation admin |
 | **Système de rôles** | ✅ Complet | Étudiant vs Admin (Professeur) |
-| **Écran admin** | ✅ Complet | Approve/reject étudiants depuis Firestore |
+| **Écran admin** | ✅ Complet | Approve/reject/delete étudiants depuis Firestore |
 | **Écran "Demande reçue"** | ✅ Complet | Confirmation après inscription |
+| **Suppression étudiants** | ✅ Complet | Bouton 🗑️ Supprimer dans Espace Professeur |
+| **Bilan étudiant (admin)** | ✅ Complet | Bouton 📄 Voir Bilan + fenêtre modale détaillée |
+| **Sauvegarde scores Firestore** | ✅ Complet | Scores/stats sauvegardés automatiquement en fin de jeu |
+| **Ré-inscription après suppression** | ✅ Complet | Parcours guidé pour demander un nouvel accès |
 | **Niveau 1 (Réception)** | ✅ Refonte complète | Interface graphique avec images réelles |
 | **Niveau 2 (Macroscopie)** | ✅ Fonctionnel | Photos réelles étudiante + Dr Senior |
 | **Niveau 3 (Technique)** | ✅ Fonctionnel | Drag & drop pour ordonner étapes |
@@ -191,6 +195,24 @@ const ADMIN_EMAILS = ["nizartaboubi@gmail.com", "laboatfkamoun@gmail.com"];
 | **Total** | **900 pts** |
 
 ---
+
+### Session 2026-05-06
+- **Gestion avancée des étudiants (Espace Professeur)** :
+  - Ajout d'un bouton **🗑️ Supprimer** pour chaque étudiant approuvé. Supprime le document Firestore (efface profil + scores), ce qui coupe immédiatement l'accès au jeu.
+  - Ajout d'un bouton **📄 Voir Bilan** qui ouvre une fenêtre modale affichant : score total, % de réussite, temps de jeu, erreurs critiques, et le **détail des scores par niveau** (Niveaux 1 à 5).
+  - Le score et le pourcentage s'affichent désormais en ligne dans la liste des étudiants autorisés.
+- **Sauvegarde automatique des résultats** (`js/game.js` + `js/auth.js`) :
+  - Création de `window.saveUserScore(results)` dans `auth.js` pour sauvegarder un objet complet dans Firestore (`totalScore`, `percent`, `time`, `errors`, `levelScores`, `levelPassed`).
+  - Appel de cette fonction dans `renderResults()` de `game.js` après l'affichage des résultats.
+  - Les données sont stockées dans le champ `results` du document utilisateur dans la collection `users`.
+- **Parcours de ré-inscription après suppression** :
+  - Problème initial : après suppression, l'étudiant voyait une erreur Firebase "email already in use" s'il tentait de se réinscrire.
+  - Solution : quand un utilisateur authentifié n'a plus de document Firestore (car supprimé), il est redirigé vers un écran `#form-re-request-block` avec un champ "Nom Complet" et un bouton "Demander l'accès".
+  - Un clic sur ce bouton recrée son document Firestore avec `status: "pending"`, le faisant réapparaître dans la liste "En attente" de l'administrateur.
+  - Ajout du bloc HTML `#form-re-request-block` dans `index.html` avec un champ de saisie (fond blanc, texte noir).
+  - Logique dans `onAuthStateChanged` mise à jour pour gérer 4 cas : `approved`, `pending`, `deleted (no doc)`, `statut inconnu`.
+  - Message d'erreur amélioré : si inscription avec email existant → message explicite invitant à se connecter.
+- **Mise à jour `DEPLOY_GITHUB.bat`** : message de commit mis à jour pour refléter les nouvelles fonctionnalités.
 
 ### Session 2026-05-05
 - **Niveau 4 (Phase 1)** :
