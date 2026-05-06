@@ -280,6 +280,23 @@ const btnRegister = document.getElementById('btn-register');
       location.reload(); // Refresh to stop the game state
     });
   }
+
+  // Fonction globale : retour à la connexion (signe out + affiche login)
+  window.goToLogin = async () => {
+    if (auth.currentUser) {
+      await auth.signOut();
+    }
+    // Cacher tous les blocs
+    document.getElementById('form-login-block').style.display='block';
+    document.getElementById('form-register-block').style.display='none';
+    document.getElementById('form-pending-block').style.display='none';
+    document.getElementById('form-re-request-block').style.display='none';
+    // Vider les champs de login
+    const emailField = document.getElementById('auth-login-email');
+    const pwField = document.getElementById('auth-login-pw');
+    if (emailField) emailField.value = '';
+    if (pwField) pwField.value = '';
+  };
   // Global function to save results
   window.saveUserScore = async (results) => {
     if (auth.currentUser && db) {

@@ -554,7 +554,7 @@
             Votre demande d'accès a été transmise avec succès.<br>
             Un administrateur doit maintenant <strong>valider votre compte</strong> avant que vous ne puissiez accéder au Serious Game.
           </p>
-          <button class="btn btn-ghost" style="width:100%; justify-content:center;" onclick="location.reload()">Retour à la connexion</button>
+          <button class="btn btn-ghost" style="width:100%; justify-content:center;" onclick="window.goToLogin()">Retour à la connexion</button>
         </div>
 
         <!-- Demande Nouvel Accès (après suppression) -->
@@ -569,7 +569,7 @@
             <input type="text" id="auth-re-name" placeholder="Votre nom ici..." style="width:100%;padding:12px;border:1.5px solid #cbd5e1;border-radius:var(--r-sm);font-size:0.95rem;background:white;color:#1e293b;">
           </div>
           <button class="btn btn-primary" style="width:100%; justify-content:center; margin-bottom:12px" id="btn-re-request">Demander l'accès</button>
-          <button class="btn btn-ghost" style="width:100%; justify-content:center;" onclick="location.reload()">Annuler</button>
+          <button class="btn btn-ghost" style="width:100%; justify-content:center;" onclick="window.goToLogin()">Annuler</button>
         </div>
 
         <div id="auth-error-msg" style="color:var(--danger); font-size:0.8rem; margin-top:15px; text-align:center; font-weight:bold;"></div>
