@@ -554,7 +554,22 @@
             Votre demande d'accès a été transmise avec succès.<br>
             Un administrateur doit maintenant <strong>valider votre compte</strong> avant que vous ne puissiez accéder au Serious Game.
           </p>
-          <button class="btn btn-ghost" style="width:100%; justify-content:center;" onclick="document.getElementById('form-pending-block').style.display='none'; document.getElementById('form-login-block').style.display='block'">Retour à la connexion</button>
+          <button class="btn btn-ghost" style="width:100%; justify-content:center;" onclick="location.reload()">Retour à la connexion</button>
+        </div>
+
+        <!-- Demande Nouvel Accès (après suppression) -->
+        <div id="form-re-request-block" style="display:none; text-align:center; padding: 20px 0;">
+          <h3 style="color:var(--cyan); margin-bottom:12px; font-weight:800;">Accès réinitialisé</h3>
+          <p style="color:var(--text-secondary); font-size:0.85rem; line-height:1.6; margin-bottom:20px;">
+            Votre profil a été réinitialisé par un administrateur.<br>
+            Veuillez confirmer votre <strong>Nom Complet</strong> pour demander un nouvel accès.
+          </p>
+          <div style="margin-bottom:16px; text-align:left;">
+            <label style="display:block;font-size:0.75rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;">Nom Complet</label>
+            <input type="text" id="auth-re-name" placeholder="Dr. Jeanne Dupont" style="width:100%;padding:12px;border:1.5px solid var(--border-glass);border-radius:var(--r-sm);font-size:0.95rem;">
+          </div>
+          <button class="btn btn-primary" style="width:100%; justify-content:center; margin-bottom:12px" id="btn-re-request">Demander l'accès</button>
+          <button class="btn btn-ghost" style="width:100%; justify-content:center;" onclick="location.reload()">Annuler</button>
         </div>
 
         <div id="auth-error-msg" style="color:var(--danger); font-size:0.8rem; margin-top:15px; text-align:center; font-weight:bold;"></div>

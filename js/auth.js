@@ -147,7 +147,11 @@ const btnRegister = document.getElementById('btn-register');
           document.getElementById('form-pending-block').style.display='block';
         }
       } catch (error) {
-        showMsg("Erreur de connexion. Vérifiez vos identifiants.");
+        if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+          showMsg("Email ou mot de passe incorrect.");
+        } else {
+          showMsg("Erreur de connexion. Vérifiez vos identifiants.");
+        }
       }
     });
   }
@@ -188,7 +192,11 @@ const btnRegister = document.getElementById('btn-register');
         document.getElementById('form-pending-block').style.display='block';
       } catch (error) {
         console.error("Erreur durant l'inscription:", error);
-        showMsg("Erreur : " + error.message);
+        if (error.code === 'auth/email-already-in-use') {
+          showMsg("Cet email est déjà utilisé. Veuillez vous connecter pour demander un nouvel accès.");
+        } else {
+          showMsg("Erreur : " + error.message);
+        }
       } finally {
         btnRegister.textContent = originalBtnText;
         btnRegister.disabled = false;
@@ -217,8 +225,16 @@ const btnRegister = document.getElementById('btn-register');
           console.log("Étudiant approuvé. Redirection Home.");
           document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
           document.getElementById('screen-home').classList.add('active');
+        } else if (userDoc.exists() && userDoc.data().status === "pending") {
+          console.log("Étudiant en attente.");
+          document.getElementById('form-login-block').style.display='none'; 
+          document.getElementById('form-pending-block').style.display='block';
+        } else if (!userDoc.exists()) {
+          console.warn("Utilisateur authentifié mais sans profil (supprimé).");
+          document.getElementById('form-login-block').style.display='none'; 
+          document.getElementById('form-re-request-block').style.display='block';
         } else {
-          console.warn("Utilisateur non approuvé ou inconnu. Déconnexion.");
+          console.warn("Statut inconnu. Déconnexion.");
           auth.signOut();
         }
       }
@@ -303,3 +319,28 @@ const btnRegister = document.getElementById('btn-register');
     overlay.querySelector('.close-bilan').onclick = close;
     overlay.querySelector('#close-bilan-btn').onclick = close;
   }
+
+  // Gérer la nouvelle demande d'accès (après suppression)
+  const btnReRequest = document.getElementById('btn-re-request');
+  if (btnReRequest) {
+    btnReRequest.addEventListener('click', async () => {
+      const name = document.getElementById('auth-re-name').value;
+      if (!name) return showMsg("Veuillez entrer votre nom.");
+      
+      if (auth.currentUser) {
+        try {
+          await setDoc(doc(db, "users", auth.currentUser.uid), {
+            name: name,
+            email: auth.currentUser.email,
+            status: "pending",
+            createdAt: new Date().toISOString()
+          });
+          document.getElementById('form-re-request-block').style.display='none'; 
+          document.getElementById('form-pending-block').style.display='block';
+        } catch (e) {
+          showMsg("Erreur lors de la demande.");
+        }
+      }
+    });
+  }
+
